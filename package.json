@@ -1,0 +1,24 @@
+{
+  "name": "omen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@gelatonetwork/core": "^0.5.3",
+    "@gnosis.pm/conditional-tokens-contracts": "^1.0.1",
+    "@studydefi/money-legos": "^2.3.7",
+    "contract-proxy-kit": "^1.1.2",
+    "dotenv": "^8.2.0",
+    "ethers": "^5.0.8"
+  },
+  "devDependencies": {
+    "ganache-core": "^2.11.2",
+    "jest": "^26.4.0"
+  }
+}
