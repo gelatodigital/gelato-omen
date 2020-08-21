@@ -5,6 +5,7 @@ require("dotenv").config();
 const erc20 = require("@studydefi/money-legos/erc20");
 const uniswap = require("@studydefi/money-legos/uniswap");
 const omen = require("./condition_tokens_mm");
+const gelatoContracts = require("./gelato");
 
 // Gelato
 const gelato = require("@gelatonetwork/core");
@@ -12,6 +13,7 @@ const gelato = require("@gelatonetwork/core");
 const gelatoAddresses = {
   gelatoCore: "0x1d681d76ce96E4d70a88A00EBbcfc1E47808d0b8",
   timeCondition: "0x63129681c487d231aa9148e1e21837165f38deaf",
+  gnosisSafeProviderModule: "0x3a994Cd3a464032B8d0eAa16F91C446A46c4fEbC",
 };
 
 // CPK
@@ -27,6 +29,7 @@ const initialFunds = BigNumber.from((10e18).toString());
 // Conditional Tokens
 const NUM_OUTCOMES = 10;
 const QUESTION_ID = ethers.constants.HashZero;
+const PARENT_COLLETION_ID = ethers.constants.HashZero;
 
 const fromWei = (x) => ethers.utils.formatUnits(x, 18);
 
@@ -67,6 +70,11 @@ describe("Omen automated withdrawal test with Gelato", () => {
   let taskSubmitTxReceipt;
   let conditionId;
   let executionTime;
+  let actionLiquidityWithdraw;
+  let daiExchangeContract;
+  let randomUser;
+  let task;
+  let taskReceipt;
 
   beforeAll(async () => {
     wallet = await startChain();
@@ -120,26 +128,21 @@ describe("Omen automated withdrawal test with Gelato", () => {
         gasLimit: GAS_LIMIT,
       }
     );
-    const daiExchangeContract = new ethers.Contract(
+    daiExchangeContract = new ethers.Contract(
       daiExchangeAddress,
       uniswap.exchange.abi,
       wallet
     );
 
     // 2. do the actual swapping
-    try {
-      await daiExchangeContract.ethToTokenSwapOutput(
-        initialFunds.mul(BigNumber.from("2")), // min amount of token retrieved
-        2525644800, // random timestamp in the future (year 2050)
-        {
-          gasLimit: GAS_LIMIT,
-          value: ethers.utils.parseEther("5"),
-        }
-      );
-    } catch (err) {
-      console.log(err);
-      console.log("Could not swap");
-    }
+    await daiExchangeContract.ethToTokenSwapOutput(
+      initialFunds.mul(BigNumber.from("2")), // min amount of token retrieved
+      2525644800, // random timestamp in the future (year 2050)
+      {
+        gasLimit: GAS_LIMIT,
+        value: ethers.utils.parseEther("5"),
+      }
+    );
 
     // 3. check DAI balance
     const daiBalanceWei = await dai.balanceOf(wallet.address, {
@@ -281,7 +284,7 @@ describe("Omen automated withdrawal test with Gelato", () => {
       cpk.address
     );
 
-    // Proxy should have initial Funds DAI
+    // Proxy should have initial Funds LP Tplens
     expect(parseFloat(fromWei(liquidityPoolTokenBalance))).toBe(
       parseFloat(fromWei(initialFunds))
     );
@@ -295,6 +298,109 @@ describe("Omen automated withdrawal test with Gelato", () => {
     });
   });
 
+  test("Deploy Liquidity Withdraw Action", async () => {
+    const actionLiquidityWithdrawFactory = new ethers.ContractFactory(
+      gelatoContracts.actionWithdrawLiquidity.abi,
+      gelatoContracts.actionWithdrawLiquidity.bytecode,
+      wallet
+    );
+
+    actionLiquidityWithdraw = await actionLiquidityWithdrawFactory.deploy();
+
+    await actionLiquidityWithdraw.deployTransaction.wait();
+  });
+
+  test("Random User buys outcome tokens", async () => {
+    randomUser = ethers.Wallet.createRandom().connect(wallet.provider);
+
+    // Fund Random User With ETH
+    await wallet.sendTransaction({
+      to: randomUser.address,
+      value: ethers.utils.parseEther("25"),
+      gasLimit: GAS_LIMIT,
+    });
+
+    const randomUserEthBalance = await wallet.provider.getBalance(
+      randomUser.address
+    );
+
+    // Random User buys DAI
+    const daiToSell = ethers.utils.parseEther("4");
+    daiExchangeContract = daiExchangeContract.connect(randomUser);
+    const swapTx = await daiExchangeContract.ethToTokenSwapOutput(
+      daiToSell, // min amount of token retrieved
+      2525644800, // random timestamp in the future (year 2050)
+      {
+        gasLimit: GAS_LIMIT,
+        value: ethers.utils.parseEther("4"),
+      }
+    );
+    await swapTx.wait();
+
+    // check DAI balance
+    let daiBalanceWei = await dai.balanceOf(randomUser.address, {
+      gasLimit: GAS_LIMIT,
+    });
+    let daiBalance = parseFloat(fromWei(daiBalanceWei));
+    expect(daiBalance).toBeGreaterThan(0);
+
+    // Now random user buys outcome tokens
+    const outcomeIndex = 2;
+    const buyAmount = await fixedProductMarketMaker.calcBuyAmount(
+      daiToSell,
+      outcomeIndex
+    );
+
+    const approveTx = await dai
+      .connect(randomUser)
+      .approve(fixedProductMarketMaker.address, daiToSell);
+    await approveTx.wait();
+
+    const buyConditionalTokenTx = await fixedProductMarketMaker
+      .connect(randomUser)
+      .buy(daiToSell, outcomeIndex, buyAmount);
+    await buyConditionalTokenTx.wait();
+
+    // Should have 0 DAI
+    daiBalanceWei = await dai.balanceOf(randomUser.address, {
+      gasLimit: GAS_LIMIT,
+    });
+    daiBalance = parseFloat(fromWei(daiBalanceWei));
+
+    expect(daiBalance).toBe(0);
+
+    // Should have buyAmount Specific conditional token balance
+    const indexSet = getIndexSets(NUM_OUTCOMES);
+    const positionIds = [];
+    const addresses = [];
+    for (const index of indexSet) {
+      const collectionId = await conditionalTokens.getCollectionId(
+        PARENT_COLLETION_ID,
+        conditionId,
+        index
+      );
+      const positionId = await conditionalTokens.getPositionId(
+        dai.address,
+        collectionId
+      );
+      positionIds.push(positionId);
+      addresses.push(randomUser.address);
+    }
+
+    const conditionalTokenBalances = await conditionalTokens.balanceOfBatch(
+      addresses,
+      positionIds
+    );
+
+    expect(parseFloat(fromWei(conditionalTokenBalances[outcomeIndex]))).toBe(
+      parseFloat(fromWei(buyAmount))
+    );
+
+    // // Re connect to old account
+    fixedProductMarketMaker.connect(wallet);
+    dai.connect(wallet);
+  });
+
   test("Submit Task On Gelato", async () => {
     let ifaceGelato = new ethers.utils.Interface(gelato.GelatoCore.abi);
     let ifaceGnoSafe = new ethers.utils.Interface([
@@ -303,9 +409,9 @@ describe("Omen automated withdrawal test with Gelato", () => {
     let ifaceFixedProductMarketMaker = new ethers.utils.Interface([
       "function removeFunding(uint256)",
     ]);
-    let ifaceTimeCondition = new ethers.utils.Interface([
-      "function timeCheck(uint256)",
-    ]);
+    let ifaceActionLiquidityWithdraw = new ethers.utils.Interface(
+      gelatoContracts.actionWithdrawLiquidity.abi
+    );
 
     // Send some ETH To Proxy
     await wallet.sendTransaction({
@@ -334,61 +440,85 @@ describe("Omen automated withdrawal test with Gelato", () => {
 
     await enableModuleTx.transactionResponse.wait();
 
-    const gnosisSafeProviderModule =
-      "0x3a994Cd3a464032B8d0eAa16F91C446A46c4fEbC";
+    // const batchProvideTx = await cpk.execTransactions(
+    //   [
+    //     {
+    //       to: gelatoCore.address,
+    //       operation: CPK.CALL,
+    //       value: proxyEtherBalance, // Deposit 1 eth on Gelato,
+    //       data: ifaceGelato.encodeFunctionData("multiProvide", [
+    //         wallet.address, // Executor address (in this case user is its own executor)
+    //         [],
+    //         [gelatoAddresses.gnosisSafeProviderModule],
+    //       ]),
+    //     },
+    //   ],
+    //   {
+    //     gasLimit: 5000000,
+    //   }
+    // );
 
-    const batchProvideTx = await cpk.execTransactions(
-      [
-        {
-          to: gelatoCore.address,
-          operation: CPK.CALL,
-          value: proxyEtherBalance, // Deposit 1 eth on Gelato,
-          data: ifaceGelato.encodeFunctionData("multiProvide", [
-            wallet.address, // Executor address (in this case user is its own executor)
-            [],
-            [gnosisSafeProviderModule],
-          ]),
-        },
-      ],
-      {
-        gasLimit: 5000000,
-      }
-    );
-
-    await batchProvideTx.transactionResponse.wait();
-
-    console.log("Gelato Batch Enabled");
+    // await batchProvideTx.transactionResponse.wait();
 
     const myGelatoProvider = {
-      addr: cpk.address,
-      module: gnosisSafeProviderModule,
+      addr: randomUser.address,
+      module: gelatoAddresses.gnosisSafeProviderModule,
     };
 
     const block = await wallet.provider.getBlock();
-    console.log(block);
-    console.log(`Current Block Time: ${block.timestamp}`);
 
     executionTime = block.timestamp + 5 * 60; // 5 minutes
-    console.log(`Execution Time: ${executionTime}`);
 
     const timeCondition = new gelato.Condition({
       inst: gelatoAddresses.timeCondition,
       data: ethers.utils.defaultAbiCoder.encode(["uint256"], [executionTime]),
     });
 
-    const removeFundingAction = new gelato.Action({
-      addr: fixedProductMarketMaker.address,
-      data: ifaceFixedProductMarketMaker.encodeFunctionData("removeFunding", [
-        initialFunds,
-      ]),
-      operation: gelato.Operation.Call,
+    const indexSet = getIndexSets(NUM_OUTCOMES);
+
+    const positionIds = [];
+
+    for (const index of indexSet) {
+      const collectionId = await conditionalTokens.getCollectionId(
+        PARENT_COLLETION_ID,
+        conditionId,
+        index
+      );
+      const positionId = await conditionalTokens.getPositionId(
+        dai.address,
+        collectionId
+      );
+      positionIds.push(positionId);
+    }
+
+    const actionLiquidityWithdrawInputs = [
+      conditionalTokens.address,
+      fixedProductMarketMaker.address,
+      positionIds,
+      conditionId,
+      PARENT_COLLETION_ID,
+      dai.address,
+      wallet.address,
+    ];
+
+    const actionLiquidityWithdrawAction = new gelato.Action({
+      addr: actionLiquidityWithdraw.address,
+      data: ifaceActionLiquidityWithdraw.encodeFunctionData(
+        "action",
+        actionLiquidityWithdrawInputs
+      ),
+      operation: gelato.Operation.Delegatecall,
     });
 
-    const task = new gelato.Task({
+    task = new gelato.Task({
       conditions: [timeCondition],
-      actions: [removeFundingAction],
-      selfProviderGasLimit: 2000000,
+      actions: [actionLiquidityWithdrawAction],
+      selfProviderGasLimit: 0,
+      selfProviderGasPriceCeil: 0,
     });
+
+    let currentGelatoId = await gelatoCore.currentTaskReceiptId();
+    console.log(`Id: ${currentGelatoId}`);
 
     const submitTaskTx = await cpk.execTransactions(
       [
@@ -410,18 +540,13 @@ describe("Omen automated withdrawal test with Gelato", () => {
 
     taskSubmitTxReceipt = await submitTaskTx.transactionResponse.wait();
 
-    console.log("Submit Task Successull");
-  });
-
-  test("Execute TaskReceipt with unlocked Executor", async () => {
     // Fetch event of the last task receipt
-    const currentGelatoId = await gelatoCore.currentTaskReceiptId();
+    currentGelatoId = await gelatoCore.currentTaskReceiptId();
     const topics = gelatoCore.filters.LogTaskSubmitted(currentGelatoId).topics;
-
     const filter = {
-      address: gelatoCore.address,
-      blockHash: taskSubmitTxReceipt.blockhash,
-      topics: topics,
+      address: gelatoCore.address.toLowerCase(),
+      blockhash: taskSubmitTxReceipt.blockHash,
+      topics,
     };
 
     let iface = new ethers.utils.Interface(gelato.GelatoCore.abi);
@@ -434,8 +559,32 @@ describe("Omen automated withdrawal test with Gelato", () => {
 
     let event = iface.parseLog(log);
 
-    const taskReceipt = event.args.taskReceipt;
+    taskReceipt = event.args.taskReceipt;
 
+    console.log(taskReceipt);
+  });
+
+  test("Whitelist Task Spec as External Provider", async () => {
+    const taskSpec = new gelato.TaskSpec({
+      conditions: [task.conditions[0].inst],
+      actions: task.actions,
+      gasPriceCeil: 0,
+    });
+
+    // Provide Task Spec
+    const provideTaskSpecTx = await gelatoCore.connect(randomUser).multiProvide(
+      wallet.address, // executor
+      [taskSpec], // Task Specs
+      [gelatoAddresses.gnosisSafeProviderModule], // Gnosis Safe provider Module
+      {
+        gasLimit: GAS_LIMIT,
+        value: ethers.utils.parseEther("10"),
+      }
+    );
+    await provideTaskSpecTx.wait();
+  });
+
+  test("Execute TaskReceipt with unlocked Executor", async () => {
     // See if it is executable
 
     const oracleAbi = ["function latestAnswer() view returns (int256)"];
@@ -452,20 +601,16 @@ describe("Omen automated withdrawal test with Gelato", () => {
     const gelatoGasPrice = await gelatoGasPriceOracle.latestAnswer();
     const gelatoMaxGas = await gelatoCore.gelatoMaxGas();
 
-    console.log("pre Can Exec");
+    console.log("5");
     let canExecResult = await gelatoCore.canExec(
       taskReceipt,
-      taskReceipt.tasks[0].selfProviderGasLimit,
+      gelatoMaxGas,
       gelatoGasPrice
     );
     console.log(`Can Exec Result = ${canExecResult}`);
 
     await wallet.provider.send("evm_mine", [executionTime]);
-    const block = await wallet.provider.getBlock();
-    console.log(`Current time: ${block.timestamp}`);
-    console.log(`Exec time: ${executionTime}`);
 
-    console.log("pre Can Exec");
     canExecResult = await gelatoCore.canExec(
       taskReceipt,
       taskReceipt.tasks[0].selfProviderGasLimit,
@@ -481,105 +626,59 @@ describe("Omen automated withdrawal test with Gelato", () => {
       parseFloat(fromWei(initialFunds))
     );
 
-    console.log(`Pool Token Balance Pre: ${poolTokenBalanceBefore.toString()}`);
+    const daiBalanceBefore = await dai.balanceOf(wallet.address);
 
-    await gelatoCore.exec(taskReceipt, {
+    expect(parseFloat(fromWei(daiBalanceBefore))).toBe(parseFloat(fromWei(0)));
+
+    // ########### PRE EXEUTION
+
+    const execTx = await gelatoCore.connect(wallet).exec(taskReceipt, {
       gasPrice: gelatoGasPrice,
       gasLimit: 5000000,
     });
 
+    await execTx.wait();
+
+    // // Should have buyAmount Specific conditional token balance
+    // const indexSet = getIndexSets(NUM_OUTCOMES);
+    // const positionIds = [];
+    // const addresses = [];
+    // for (const index of indexSet) {
+    //   const collectionId = await conditionalTokens.getCollectionId(
+    //     PARENT_COLLETION_ID,
+    //     conditionId,
+    //     index
+    //   );
+    //   const positionId = await conditionalTokens.getPositionId(
+    //     dai.address,
+    //     collectionId
+    //   );
+    //   positionIds.push(positionId);
+    //   addresses.push(cpk.address);
+    // }
+
+    // let conditionalTokenBalances = await conditionalTokens.balanceOfBatch(
+    //   addresses,
+    //   positionIds
+    // );
+
+    // conditionalTokenBalances.forEach((balance) =>
+    //   console.log(balance.toString())
+    // );
+
     const poolTokenBalanceAfter = await fixedProductMarketMaker.balanceOf(
       cpk.address
     );
-    console.log(`Pool Token Balance Post: ${poolTokenBalanceAfter.toString()}`);
 
     expect(parseFloat(fromWei(poolTokenBalanceAfter))).toBe(parseFloat("0"));
-  });
 
-  test("Check the conditional token balances", async () => {
-    // conditionalTokens
-    // The amount of conditional tokens to receive back should equal to
-    // where:
-    // Condtional token balance = Smallest conditional token balance we have
-    // Rempved funds equal to balance of LP tokens
-    // PoolShareSupply == Total supply of Pool => VERIDY
-    // conditionalTokenBalance.mul(removedFunds).div(poolShareSupply)
-
-    // 1. Remove funds and receive back outcome tokens for LP tokens => Done
-
-    // 2. Check the balance of each outcome token
-    const indexSet = getIndexSets(NUM_OUTCOMES);
-    const parentCollectionId = ethers.constants.HashZero;
-    let tokenBalances = [];
-    for (let index of indexSet) {
-      const collectionId = await conditionalTokens.getCollectionId(
-        parentCollectionId,
-        conditionId,
-        index
-      );
-
-      const positionId = await conditionalTokens.getPositionId(
-        dai.address,
-        collectionId
-      );
-
-      const balanceOfSpecificToken = await conditionalTokens.balanceOf(
-        cpk.address,
-        positionId
-      );
-      tokenBalances.push(balanceOfSpecificToken);
-    }
-
-    // Reduce Token Balance to smallest number
-    const conditionTokenAmountMerge = tokenBalances.reduce((min, amount) => {
-      console.log(min);
-      console.log(amount);
-      return amount.lt(min) ? amount : min;
-    });
-
-    console.log(`Amount to be merged: ${conditionTokenAmountMerge}`);
-
-    // console.log(`Collection Id: ${collectionId}`)
-    // const positionId = await conditionalTokens.getPositionId(dai.address, collectionId)
-    // console.log(`Position Id: ${positionId}`)
-
-    // const balanceOfSpecificToken = await conditionalTokens.balanceOf(cpk.address, positionId)
-
-    // 4. Call "MergePositions" with smallest outcome token balance available
-    const daiBalanceBefore = await dai.balanceOf(cpk.address);
-    console.log(`Dai Balance before: ${daiBalanceBefore.toString()}`);
-
-    // Send Tx via Proxy
-    let ifaceConditionalTokens = new ethers.utils.Interface(
-      omen.conditionalTokens.abi
+    const daiBalanceAfter = await dai.balanceOf(wallet.address);
+    console.log(
+      `Collateral Received back: ${parseFloat(fromWei(daiBalanceAfter))}`
     );
 
-    const mergeTx = await cpk.execTransactions(
-      [
-        {
-          to: conditionalTokens.address,
-          operation: CPK.CALL,
-          value: 0,
-          data: ifaceConditionalTokens.encodeFunctionData("mergePositions", [
-            dai.address,
-            parentCollectionId,
-            conditionId,
-            indexSet,
-            conditionTokenAmountMerge,
-          ]),
-        },
-      ],
-      {
-        gasLimit: 5000000,
-      }
-    );
-
-    taskSubmitTxReceipt = await mergeTx.transactionResponse.wait();
-
-    const daiBalanceAfter = await dai.balanceOf(cpk.address);
-    console.log(`Dai Balance after: ${daiBalanceAfter.toString()}`);
-    expect(parseFloat(fromWei(daiBalanceAfter))).toBe(
-      parseFloat(fromWei(initialFunds))
-    );
+    // expect(parseFloat(fromWei(daiBalanceAfter))).toBe(
+    //   parseFloat(fromWei(initialFunds))
+    // );
   });
 });
