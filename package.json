@@ -1,12 +1,16 @@
 {
   "name": "omen",
   "version": "1.0.0",
-  "description": "",
+  "description": "Automating Liquidty Withdrawals on Gnosis' Conditional Token Contracts using Gelato",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": [
+    "gelatonetwork",
+    "gnosis",
+    "omen.eth"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
