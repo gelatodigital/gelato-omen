@@ -1,1 +1,6 @@
+# Dependency directory
+node_modules
+
+# Envs
 .env
+
