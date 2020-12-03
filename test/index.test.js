@@ -7,7 +7,6 @@ const { ethers } = hre;
 const erc20 = require("@studydefi/money-legos/erc20");
 const uniswap = require("@studydefi/money-legos/uniswap");
 const omen = require("../condition_tokens_mm");
-const gelatoContracts = require("../gelato");
 
 // Gelato
 const gelato = require("@gelatonetwork/core");
@@ -19,6 +18,8 @@ const gelatoAddresses = {
   timeCondition: "0x63129681c487d231aa9148e1e21837165f38deaf",
   gnosisSafeProviderModule: "0x3a994Cd3a464032B8d0eAa16F91C446A46c4fEbC",
 };
+
+const uniswapV2Address = "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D";
 
 // CPK
 const CPK = require("contract-proxy-kit");
@@ -58,7 +59,7 @@ describe("Omen automated withdrawal test with Gelato", function () {
   let provider;
   let task;
   let taskReceipt;
-  // let uniRouterV2;
+  let oracleAggAddress;
 
   before(async () => {
     [wallet] = await ethers.getSigners();
@@ -290,12 +291,23 @@ describe("Omen automated withdrawal test with Gelato", function () {
     });
   });
 
+  it("Deploy Oracle Aggregator", async () => {
+    const oracleAggArtifact = hre.artifacts.readArtifactSync('GelatoOracleAggregator');
+    const oracleAggFactory = new ethers.ContractFactory(
+      oracleAggArtifact.abi,
+      oracleAggArtifact.bytecode,
+      wallet
+    );
+    let oracleAggregator = await oracleAggFactory.deploy();
+    oracleAggAddress = oracleAggregator.address;
+  });
+
   it("Deploy Liquidity Withdraw Action", async () => {
     provider = ethers.Wallet.createRandom().connect(wallet.provider);
-
+    const liquidityActionArtifact = hre.artifacts.readArtifactSync('ActionWithdrawLiquidity');
     const actionLiquidityWithdrawFactory = new ethers.ContractFactory(
-      gelatoContracts.actionWithdrawLiquidity.abi,
-      gelatoContracts.actionWithdrawLiquidity.bytecode,
+      liquidityActionArtifact.abi,
+      liquidityActionArtifact.bytecode,
       wallet
     );
 
@@ -303,7 +315,8 @@ describe("Omen automated withdrawal test with Gelato", function () {
       gelatoCore.address,
       provider.address,
       WETH,
-      gelatoContracts.uniswapV2Router.address
+      uniswapV2Address,
+      oracleAggAddress
     );
 
     await actionLiquidityWithdraw.deployTransaction.wait();
@@ -406,8 +419,9 @@ describe("Omen automated withdrawal test with Gelato", function () {
     // let ifaceFixedProductMarketMaker = new ethers.utils.Interface([
     //   "function removeFunding(uint256)",
     // ]);
+    const liquidityActionArtifact = hre.artifacts.readArtifactSync('ActionWithdrawLiquidity');
     let ifaceActionLiquidityWithdraw = new ethers.utils.Interface(
-      gelatoContracts.actionWithdrawLiquidity.abi
+      liquidityActionArtifact.abi
     );
 
     // Send some ETH To Proxy
