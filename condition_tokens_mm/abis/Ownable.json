@@ -86,21 +86,14 @@
   "ast": {
     "absolutePath": "openzeppelin-solidity/contracts/ownership/Ownable.sol",
     "exportedSymbols": {
-      "Ownable": [
-        8606
-      ]
+      "Ownable": [8606]
     },
     "id": 8607,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 8497,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:23"
       },
@@ -111,9 +104,7 @@
         "documentation": "@dev Contract module which provides a basic access control mechanism, where\nthere is an account (an owner) that can be granted exclusive access to\nspecific functions.\n * This module is used through inheritance. It will make available the modifier\n`onlyOwner`, which can be aplied to your functions to restrict their use to\nthe owner.",
         "fullyImplemented": true,
         "id": 8606,
-        "linearizedBaseContracts": [
-          8606
-        ],
+        "linearizedBaseContracts": [8606],
         "name": "Ownable",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -577,10 +568,7 @@
                       "id": 8531,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "1010:7:23",
                       "typeDescriptions": {
@@ -1275,10 +1263,7 @@
                       "id": 8586,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "2158:7:23",
                       "typeDescriptions": {
@@ -1486,21 +1471,14 @@
   "legacyAST": {
     "absolutePath": "openzeppelin-solidity/contracts/ownership/Ownable.sol",
     "exportedSymbols": {
-      "Ownable": [
-        8606
-      ]
+      "Ownable": [8606]
     },
     "id": 8607,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 8497,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:23"
       },
@@ -1511,9 +1489,7 @@
         "documentation": "@dev Contract module which provides a basic access control mechanism, where\nthere is an account (an owner) that can be granted exclusive access to\nspecific functions.\n * This module is used through inheritance. It will make available the modifier\n`onlyOwner`, which can be aplied to your functions to restrict their use to\nthe owner.",
         "fullyImplemented": true,
         "id": 8606,
-        "linearizedBaseContracts": [
-          8606
-        ],
+        "linearizedBaseContracts": [8606],
         "name": "Ownable",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1977,10 +1953,7 @@
                       "id": 8531,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "1010:7:23",
                       "typeDescriptions": {
@@ -2675,10 +2648,7 @@
                       "id": 8586,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "2158:7:23",
                       "typeDescriptions": {

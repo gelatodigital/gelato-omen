@@ -6,10 +6,10 @@ This repo contains tests showcasing how liquidity providers on Omen.eth or any o
 
 1. Add `INFURA_KEY` and a mainnet private key (`PK`) to your `.env` file
 
-
 2. Run:
 
 ```
-npm install
-npx jest
+nvm install 14.15.1 // or nvm use 14.15.1
+yarn
+yarn test
 ```

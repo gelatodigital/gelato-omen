@@ -281,21 +281,14 @@
   "ast": {
     "absolutePath": "@gnosis.pm/conditional-tokens-contracts/contracts/ERC1155/IERC1155.sol",
     "exportedSymbols": {
-      "IERC1155": [
-        6790
-      ]
+      "IERC1155": [6790]
     },
     "id": 6791,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 6681,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:14"
       },
@@ -331,17 +324,12 @@
             "src": "233:7:14"
           }
         ],
-        "contractDependencies": [
-          8362
-        ],
+        "contractDependencies": [8362],
         "contractKind": "contract",
         "documentation": "@title ERC-1155 Multi Token Standard basic interface\n@dev See https://eips.ethereum.org/EIPS/eip-1155",
         "fullyImplemented": false,
         "id": 6790,
-        "linearizedBaseContracts": [
-          6790,
-          8362
-        ],
+        "linearizedBaseContracts": [6790, 8362],
         "name": "IERC1155",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1624,21 +1612,14 @@
   "legacyAST": {
     "absolutePath": "@gnosis.pm/conditional-tokens-contracts/contracts/ERC1155/IERC1155.sol",
     "exportedSymbols": {
-      "IERC1155": [
-        6790
-      ]
+      "IERC1155": [6790]
     },
     "id": 6791,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 6681,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:14"
       },
@@ -1674,17 +1655,12 @@
             "src": "233:7:14"
           }
         ],
-        "contractDependencies": [
-          8362
-        ],
+        "contractDependencies": [8362],
         "contractKind": "contract",
         "documentation": "@title ERC-1155 Multi Token Standard basic interface\n@dev See https://eips.ethereum.org/EIPS/eip-1155",
         "fullyImplemented": false,
         "id": 6790,
-        "linearizedBaseContracts": [
-          6790,
-          8362
-        ],
+        "linearizedBaseContracts": [6790, 8362],
         "name": "IERC1155",
         "nodeType": "ContractDefinition",
         "nodes": [

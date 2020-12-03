@@ -542,21 +542,14 @@
   "ast": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/LMSRMarketMaker.sol",
     "exportedSymbols": {
-      "LMSRMarketMaker": [
-        3124
-      ]
+      "LMSRMarketMaker": [3124]
     },
     "id": 3125,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 2746,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:5"
       },
@@ -629,27 +622,12 @@
             "src": "425:11:5"
           }
         ],
-        "contractDependencies": [
-          4481,
-          6679,
-          6828,
-          8352,
-          8362,
-          8606
-        ],
+        "contractDependencies": [4481, 6679, 6828, 8352, 8362, 8606],
         "contractKind": "contract",
         "documentation": "@title LMSR market maker contract - Calculates share prices based on share distribution and initial funding\n @author Alan Lu - <alan.lu@gnosis.pm>",
         "fullyImplemented": true,
         "id": 3124,
-        "linearizedBaseContracts": [
-          3124,
-          4481,
-          6679,
-          6828,
-          8352,
-          8362,
-          8606
-        ],
+        "linearizedBaseContracts": [3124, 4481, 6679, 6828, 8352, 8362, 8606],
         "name": "LMSRMarketMaker",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -848,10 +826,7 @@
                       "id": 2771,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "1182:7:5",
                       "typeDescriptions": {
@@ -878,9 +853,7 @@
                   "src": "1182:61:5"
                 },
                 {
-                  "assignments": [
-                    2781
-                  ],
+                  "assignments": [2781],
                   "declarations": [
                     {
                       "constant": false,
@@ -1000,9 +973,7 @@
                     "src": "1372:205:5",
                     "statements": [
                       {
-                        "assignments": [
-                          2799
-                        ],
+                        "assignments": [2799],
                         "declarations": [
                           {
                             "constant": false,
@@ -1294,10 +1265,7 @@
                             "id": 2812,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              8712,
-                              8713
-                            ],
+                            "overloadedDeclarations": [8712, 8713],
                             "referencedDeclaration": 8712,
                             "src": "1481:7:5",
                             "typeDescriptions": {
@@ -1524,9 +1492,7 @@
                   },
                   "id": 2830,
                   "initializationExpression": {
-                    "assignments": [
-                      2789
-                    ],
+                    "assignments": [2789],
                     "declarations": [
                       {
                         "constant": false,
@@ -1615,9 +1581,7 @@
                   "src": "1322:255:5"
                 },
                 {
-                  "assignments": [
-                    2832
-                  ],
+                  "assignments": [2832],
                   "declarations": [
                     {
                       "constant": false,
@@ -1797,11 +1761,7 @@
                   "src": "1587:110:5"
                 },
                 {
-                  "assignments": [
-                    2844,
-                    2846,
-                    null
-                  ],
+                  "assignments": [2844, 2846, null],
                   "declarations": [
                     {
                       "constant": false,
@@ -3126,9 +3086,7 @@
               "src": "2652:892:5",
               "statements": [
                 {
-                  "assignments": [
-                    2935
-                  ],
+                  "assignments": [2935],
                   "declarations": [
                     {
                       "constant": false,
@@ -3248,9 +3206,7 @@
                     "src": "2794:201:5",
                     "statements": [
                       {
-                        "assignments": [
-                          2953
-                        ],
+                        "assignments": [2953],
                         "declarations": [
                           {
                             "constant": false,
@@ -3558,10 +3514,7 @@
                             "id": 2967,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              8712,
-                              8713
-                            ],
+                            "overloadedDeclarations": [8712, 8713],
                             "referencedDeclaration": 8712,
                             "src": "2907:7:5",
                             "typeDescriptions": {
@@ -3709,9 +3662,7 @@
                   },
                   "id": 2980,
                   "initializationExpression": {
-                    "assignments": [
-                      2943
-                    ],
+                    "assignments": [2943],
                     "declarations": [
                       {
                         "constant": false,
@@ -3800,9 +3751,7 @@
                   "src": "2744:251:5"
                 },
                 {
-                  "assignments": [
-                    2982
-                  ],
+                  "assignments": [2982],
                   "declarations": [
                     {
                       "constant": false,
@@ -3998,11 +3947,7 @@
                   "src": "3005:116:5"
                 },
                 {
-                  "assignments": [
-                    2995,
-                    null,
-                    2997
-                  ],
+                  "assignments": [2995, null, 2997],
                   "declarations": [
                     {
                       "constant": false,
@@ -4553,10 +4498,7 @@
                       "id": 3033,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "5185:7:5",
                       "typeDescriptions": {
@@ -4947,9 +4889,7 @@
                   "src": "5335:30:5"
                 },
                 {
-                  "assignments": [
-                    3071
-                  ],
+                  "assignments": [3071],
                   "declarations": [
                     {
                       "constant": false,
@@ -5582,9 +5522,7 @@
                   },
                   "id": 3121,
                   "initializationExpression": {
-                    "assignments": [
-                      3074
-                    ],
+                    "assignments": [3074],
                     "declarations": [
                       {
                         "constant": false,
@@ -5905,21 +5843,14 @@
   "legacyAST": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/LMSRMarketMaker.sol",
     "exportedSymbols": {
-      "LMSRMarketMaker": [
-        3124
-      ]
+      "LMSRMarketMaker": [3124]
     },
     "id": 3125,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 2746,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:5"
       },
@@ -5992,27 +5923,12 @@
             "src": "425:11:5"
           }
         ],
-        "contractDependencies": [
-          4481,
-          6679,
-          6828,
-          8352,
-          8362,
-          8606
-        ],
+        "contractDependencies": [4481, 6679, 6828, 8352, 8362, 8606],
         "contractKind": "contract",
         "documentation": "@title LMSR market maker contract - Calculates share prices based on share distribution and initial funding\n @author Alan Lu - <alan.lu@gnosis.pm>",
         "fullyImplemented": true,
         "id": 3124,
-        "linearizedBaseContracts": [
-          3124,
-          4481,
-          6679,
-          6828,
-          8352,
-          8362,
-          8606
-        ],
+        "linearizedBaseContracts": [3124, 4481, 6679, 6828, 8352, 8362, 8606],
         "name": "LMSRMarketMaker",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -6211,10 +6127,7 @@
                       "id": 2771,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "1182:7:5",
                       "typeDescriptions": {
@@ -6241,9 +6154,7 @@
                   "src": "1182:61:5"
                 },
                 {
-                  "assignments": [
-                    2781
-                  ],
+                  "assignments": [2781],
                   "declarations": [
                     {
                       "constant": false,
@@ -6363,9 +6274,7 @@
                     "src": "1372:205:5",
                     "statements": [
                       {
-                        "assignments": [
-                          2799
-                        ],
+                        "assignments": [2799],
                         "declarations": [
                           {
                             "constant": false,
@@ -6657,10 +6566,7 @@
                             "id": 2812,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              8712,
-                              8713
-                            ],
+                            "overloadedDeclarations": [8712, 8713],
                             "referencedDeclaration": 8712,
                             "src": "1481:7:5",
                             "typeDescriptions": {
@@ -6887,9 +6793,7 @@
                   },
                   "id": 2830,
                   "initializationExpression": {
-                    "assignments": [
-                      2789
-                    ],
+                    "assignments": [2789],
                     "declarations": [
                       {
                         "constant": false,
@@ -6978,9 +6882,7 @@
                   "src": "1322:255:5"
                 },
                 {
-                  "assignments": [
-                    2832
-                  ],
+                  "assignments": [2832],
                   "declarations": [
                     {
                       "constant": false,
@@ -7160,11 +7062,7 @@
                   "src": "1587:110:5"
                 },
                 {
-                  "assignments": [
-                    2844,
-                    2846,
-                    null
-                  ],
+                  "assignments": [2844, 2846, null],
                   "declarations": [
                     {
                       "constant": false,
@@ -8489,9 +8387,7 @@
               "src": "2652:892:5",
               "statements": [
                 {
-                  "assignments": [
-                    2935
-                  ],
+                  "assignments": [2935],
                   "declarations": [
                     {
                       "constant": false,
@@ -8611,9 +8507,7 @@
                     "src": "2794:201:5",
                     "statements": [
                       {
-                        "assignments": [
-                          2953
-                        ],
+                        "assignments": [2953],
                         "declarations": [
                           {
                             "constant": false,
@@ -8921,10 +8815,7 @@
                             "id": 2967,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              8712,
-                              8713
-                            ],
+                            "overloadedDeclarations": [8712, 8713],
                             "referencedDeclaration": 8712,
                             "src": "2907:7:5",
                             "typeDescriptions": {
@@ -9072,9 +8963,7 @@
                   },
                   "id": 2980,
                   "initializationExpression": {
-                    "assignments": [
-                      2943
-                    ],
+                    "assignments": [2943],
                     "declarations": [
                       {
                         "constant": false,
@@ -9163,9 +9052,7 @@
                   "src": "2744:251:5"
                 },
                 {
-                  "assignments": [
-                    2982
-                  ],
+                  "assignments": [2982],
                   "declarations": [
                     {
                       "constant": false,
@@ -9361,11 +9248,7 @@
                   "src": "3005:116:5"
                 },
                 {
-                  "assignments": [
-                    2995,
-                    null,
-                    2997
-                  ],
+                  "assignments": [2995, null, 2997],
                   "declarations": [
                     {
                       "constant": false,
@@ -9916,10 +9799,7 @@
                       "id": 3033,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "5185:7:5",
                       "typeDescriptions": {
@@ -10310,9 +10190,7 @@
                   "src": "5335:30:5"
                 },
                 {
-                  "assignments": [
-                    3071
-                  ],
+                  "assignments": [3071],
                   "declarations": [
                     {
                       "constant": false,
@@ -10945,9 +10823,7 @@
                   },
                   "id": 3121,
                   "initializationExpression": {
-                    "assignments": [
-                      3074
-                    ],
+                    "assignments": [3074],
                     "declarations": [
                       {
                         "constant": false,

@@ -11,21 +11,14 @@
   "ast": {
     "absolutePath": "@gnosis.pm/conditional-tokens-contracts/contracts/CTHelpers.sol",
     "exportedSymbols": {
-      "CTHelpers": [
-        4926
-      ]
+      "CTHelpers": [4926]
     },
     "id": 4927,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 4629,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:10"
       },
@@ -52,9 +45,7 @@
         "documentation": null,
         "fullyImplemented": true,
         "id": 4926,
-        "linearizedBaseContracts": [
-          4926
-        ],
+        "linearizedBaseContracts": [4926],
         "name": "CTHelpers",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -432,9 +423,7 @@
               "src": "936:15316:10",
               "statements": [
                 {
-                  "assignments": [
-                    4666
-                  ],
+                  "assignments": [4666],
                   "declarations": [
                     {
                       "constant": false,
@@ -9351,9 +9340,7 @@
               "src": "16818:1100:10",
               "statements": [
                 {
-                  "assignments": [
-                    4683
-                  ],
+                  "assignments": [4683],
                   "declarations": [
                     {
                       "constant": false,
@@ -9543,9 +9530,7 @@
                   "src": "16828:66:10"
                 },
                 {
-                  "assignments": [
-                    4695
-                  ],
+                  "assignments": [4695],
                   "declarations": [
                     {
                       "constant": false,
@@ -9666,9 +9651,7 @@
                   "src": "16904:25:10"
                 },
                 {
-                  "assignments": [
-                    4703
-                  ],
+                  "assignments": [4703],
                   "declarations": [
                     {
                       "constant": false,
@@ -9703,9 +9686,7 @@
                   "src": "16939:7:10"
                 },
                 {
-                  "assignments": [
-                    4706
-                  ],
+                  "assignments": [4706],
                   "declarations": [
                     {
                       "constant": false,
@@ -10683,9 +10664,7 @@
                   }
                 },
                 {
-                  "assignments": [
-                    4771
-                  ],
+                  "assignments": [4771],
                   "declarations": [
                     {
                       "constant": false,
@@ -11343,9 +11322,7 @@
                         "src": "17372:51:10"
                       },
                       {
-                        "assignments": [
-                          4813
-                        ],
+                        "assignments": [4813],
                         "declarations": [
                           {
                             "constant": false,
@@ -11936,10 +11913,7 @@
                             "id": 4841,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              8712,
-                              8713
-                            ],
+                            "overloadedDeclarations": [8712, 8713],
                             "referencedDeclaration": 8713,
                             "src": "17556:7:10",
                             "typeDescriptions": {
@@ -11966,10 +11940,7 @@
                         "src": "17556:64:10"
                       },
                       {
-                        "assignments": [
-                          4853,
-                          4855
-                        ],
+                        "assignments": [4853, 4855],
                         "declarations": [
                           {
                             "constant": false,
@@ -12289,10 +12260,7 @@
                             "id": 4869,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              8712,
-                              8713
-                            ],
+                            "overloadedDeclarations": [8712, 8713],
                             "referencedDeclaration": 8713,
                             "src": "17733:7:10",
                             "typeDescriptions": {
@@ -13158,21 +13126,14 @@
   "legacyAST": {
     "absolutePath": "@gnosis.pm/conditional-tokens-contracts/contracts/CTHelpers.sol",
     "exportedSymbols": {
-      "CTHelpers": [
-        4926
-      ]
+      "CTHelpers": [4926]
     },
     "id": 4927,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 4629,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:10"
       },
@@ -13199,9 +13160,7 @@
         "documentation": null,
         "fullyImplemented": true,
         "id": 4926,
-        "linearizedBaseContracts": [
-          4926
-        ],
+        "linearizedBaseContracts": [4926],
         "name": "CTHelpers",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -13579,9 +13538,7 @@
               "src": "936:15316:10",
               "statements": [
                 {
-                  "assignments": [
-                    4666
-                  ],
+                  "assignments": [4666],
                   "declarations": [
                     {
                       "constant": false,
@@ -22498,9 +22455,7 @@
               "src": "16818:1100:10",
               "statements": [
                 {
-                  "assignments": [
-                    4683
-                  ],
+                  "assignments": [4683],
                   "declarations": [
                     {
                       "constant": false,
@@ -22690,9 +22645,7 @@
                   "src": "16828:66:10"
                 },
                 {
-                  "assignments": [
-                    4695
-                  ],
+                  "assignments": [4695],
                   "declarations": [
                     {
                       "constant": false,
@@ -22813,9 +22766,7 @@
                   "src": "16904:25:10"
                 },
                 {
-                  "assignments": [
-                    4703
-                  ],
+                  "assignments": [4703],
                   "declarations": [
                     {
                       "constant": false,
@@ -22850,9 +22801,7 @@
                   "src": "16939:7:10"
                 },
                 {
-                  "assignments": [
-                    4706
-                  ],
+                  "assignments": [4706],
                   "declarations": [
                     {
                       "constant": false,
@@ -23830,9 +23779,7 @@
                   }
                 },
                 {
-                  "assignments": [
-                    4771
-                  ],
+                  "assignments": [4771],
                   "declarations": [
                     {
                       "constant": false,
@@ -24490,9 +24437,7 @@
                         "src": "17372:51:10"
                       },
                       {
-                        "assignments": [
-                          4813
-                        ],
+                        "assignments": [4813],
                         "declarations": [
                           {
                             "constant": false,
@@ -25083,10 +25028,7 @@
                             "id": 4841,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              8712,
-                              8713
-                            ],
+                            "overloadedDeclarations": [8712, 8713],
                             "referencedDeclaration": 8713,
                             "src": "17556:7:10",
                             "typeDescriptions": {
@@ -25113,10 +25055,7 @@
                         "src": "17556:64:10"
                       },
                       {
-                        "assignments": [
-                          4853,
-                          4855
-                        ],
+                        "assignments": [4853, 4855],
                         "declarations": [
                           {
                             "constant": false,
@@ -25436,10 +25375,7 @@
                             "id": 4869,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              8712,
-                              8713
-                            ],
+                            "overloadedDeclarations": [8712, 8713],
                             "referencedDeclaration": 8713,
                             "src": "17733:7:10",
                             "typeDescriptions": {

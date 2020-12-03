@@ -74,21 +74,14 @@
   "ast": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/Migrations.sol",
     "exportedSymbols": {
-      "Migrations": [
-        4539
-      ]
+      "Migrations": [4539]
     },
     "id": 4540,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 4483,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:8"
       },
@@ -110,9 +103,7 @@
         "documentation": null,
         "fullyImplemented": true,
         "id": 4539,
-        "linearizedBaseContracts": [
-          4539
-        ],
+        "linearizedBaseContracts": [4539],
         "name": "Migrations",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -490,9 +481,7 @@
               "src": "589:116:8",
               "statements": [
                 {
-                  "assignments": [
-                    4526
-                  ],
+                  "assignments": [4526],
                   "declarations": [
                     {
                       "constant": false,
@@ -731,21 +720,14 @@
   "legacyAST": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/Migrations.sol",
     "exportedSymbols": {
-      "Migrations": [
-        4539
-      ]
+      "Migrations": [4539]
     },
     "id": 4540,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 4483,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:8"
       },
@@ -767,9 +749,7 @@
         "documentation": null,
         "fullyImplemented": true,
         "id": 4539,
-        "linearizedBaseContracts": [
-          4539
-        ],
+        "linearizedBaseContracts": [4539],
         "name": "Migrations",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1147,9 +1127,7 @@
               "src": "589:116:8",
               "statements": [
                 {
-                  "assignments": [
-                    4526
-                  ],
+                  "assignments": [4526],
                   "declarations": [
                     {
                       "constant": false,

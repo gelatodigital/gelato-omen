@@ -1,0 +1,5 @@
+# Ignore:
+artifacts
+cache
+assets
+coverage

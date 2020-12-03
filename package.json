@@ -1,10 +1,22 @@
 {
   "name": "omen",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "engines": {
+    "node": "14.15.1"
+  },
   "description": "Automating Liquidty Withdrawals on Gnosis' Conditional Token Contracts using Gelato",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "rebase": "HUSKY_SKIP_HOOKS=1 git rebase",
+    "compile": "npx hardhat compile",
+    "deploy:mainnet": "npx hardhat deploy --network mainnet",
+    "format": "prettier --write .",
+    "lint": "eslint --cache . && yarn lint:sol",
+    "lint:sol": "solhint 'contracts/**/*.sol'",
+    "lint:fix": "eslint --cache --fix . && solhint --fix contracts/**/*.sol",
+    "test": "npx hardhat test",
+    "test:gas": "REPORT_GAS=1 npx hardhat test",
+    "debug": "DEBUG=true yarn compile && npx hardhat test"
   },
   "keywords": [
     "gelatonetwork",
@@ -13,16 +25,41 @@
   ],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@gelatonetwork/core": "^0.5.3",
+  "dependencies": {},
+  "devDependencies": {
     "@gnosis.pm/conditional-tokens-contracts": "^1.0.1",
     "@studydefi/money-legos": "^2.3.7",
     "contract-proxy-kit": "^1.1.2",
-    "dotenv": "^8.2.0",
-    "ethers": "^5.0.8"
+    "@codechecks/client": "0.1.10",
+    "@gelatonetwork/core": "1.4.1",
+    "@nomiclabs/hardhat-ethers": "2.0.1",
+    "@nomiclabs/hardhat-waffle": "2.0.0",
+    "@openzeppelin/contracts": "3.3.0",
+    "chai": "4.2.0",
+    "dotenv": "8.2.0",
+    "eslint": "7.14.0",
+    "eslint-config-prettier": "6.15.0",
+    "ethereum-waffle": "3.2.1",
+    "ethers": "5.0.23",
+    "hardhat": "2.0.4",
+    "hardhat-deploy": "0.7.0-beta.35",
+    "hardhat-deploy-ethers": "0.3.0-beta.7",
+    "hardhat-gas-reporter": "1.0.1",
+    "husky": ">=4",
+    "lint-staged": "10.5.2",
+    "prettier": "2.2.1",
+    "prettier-plugin-solidity": "1.0.0-beta.1",
+    "solhint": "3.3.2",
+    "solhint-plugin-prettier": "0.0.5"
   },
-  "devDependencies": {
-    "ganache-core": "^2.11.2",
-    "jest": "^26.4.0"
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn install && yarn compile --force && yarn lint:sol && lint-staged",
+      "pre-push": "git fetch origin && HUSKY_SKIP_HOOKS=1 git rebase origin/master && yarn test"
+    }
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,sol,json,css,md}": "prettier --write"
   }
 }

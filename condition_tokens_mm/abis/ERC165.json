@@ -37,21 +37,14 @@
   "ast": {
     "absolutePath": "openzeppelin-solidity/contracts/introspection/ERC165.sol",
     "exportedSymbols": {
-      "ERC165": [
-        8352
-      ]
+      "ERC165": [8352]
     },
     "id": 8353,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 8302,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:20"
       },
@@ -87,17 +80,12 @@
             "src": "241:7:20"
           }
         ],
-        "contractDependencies": [
-          8362
-        ],
+        "contractDependencies": [8362],
         "contractKind": "contract",
         "documentation": "@dev Implementation of the `IERC165` interface.\n * Contracts may inherit from this and call `_registerInterface` to declare\ntheir support of an interface.",
         "fullyImplemented": true,
         "id": 8352,
-        "linearizedBaseContracts": [
-          8352,
-          8362
-        ],
+        "linearizedBaseContracts": [8352, 8362],
         "name": "ERC165",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -502,10 +490,7 @@
                       "id": 8337,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "1509:7:20",
                       "typeDescriptions": {
@@ -673,21 +658,14 @@
   "legacyAST": {
     "absolutePath": "openzeppelin-solidity/contracts/introspection/ERC165.sol",
     "exportedSymbols": {
-      "ERC165": [
-        8352
-      ]
+      "ERC165": [8352]
     },
     "id": 8353,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 8302,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:20"
       },
@@ -723,17 +701,12 @@
             "src": "241:7:20"
           }
         ],
-        "contractDependencies": [
-          8362
-        ],
+        "contractDependencies": [8362],
         "contractKind": "contract",
         "documentation": "@dev Implementation of the `IERC165` interface.\n * Contracts may inherit from this and call `_registerInterface` to declare\ntheir support of an interface.",
         "fullyImplemented": true,
         "id": 8352,
-        "linearizedBaseContracts": [
-          8352,
-          8362
-        ],
+        "linearizedBaseContracts": [8352, 8362],
         "name": "ERC165",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1138,10 +1111,7 @@
                       "id": 8337,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "1509:7:20",
                       "typeDescriptions": {

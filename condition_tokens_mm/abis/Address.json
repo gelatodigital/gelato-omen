@@ -11,21 +11,14 @@
   "ast": {
     "absolutePath": "openzeppelin-solidity/contracts/utils/Address.sol",
     "exportedSymbols": {
-      "Address": [
-        8694
-      ]
+      "Address": [8694]
     },
     "id": 8695,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 8677,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:25"
       },
@@ -36,9 +29,7 @@
         "documentation": "@dev Collection of functions related to the address type,",
         "fullyImplemented": true,
         "id": 8694,
-        "linearizedBaseContracts": [
-          8694
-        ],
+        "linearizedBaseContracts": [8694],
         "name": "Address",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -49,9 +40,7 @@
               "src": "608:347:25",
               "statements": [
                 {
-                  "assignments": [
-                    8685
-                  ],
+                  "assignments": [8685],
                   "declarations": [
                     {
                       "constant": false,
@@ -259,21 +248,14 @@
   "legacyAST": {
     "absolutePath": "openzeppelin-solidity/contracts/utils/Address.sol",
     "exportedSymbols": {
-      "Address": [
-        8694
-      ]
+      "Address": [8694]
     },
     "id": 8695,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 8677,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:25"
       },
@@ -284,9 +266,7 @@
         "documentation": "@dev Collection of functions related to the address type,",
         "fullyImplemented": true,
         "id": 8694,
-        "linearizedBaseContracts": [
-          8694
-        ],
+        "linearizedBaseContracts": [8694],
         "name": "Address",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -297,9 +277,7 @@
               "src": "608:347:25",
               "statements": [
                 {
-                  "assignments": [
-                    8685
-                  ],
+                  "assignments": [8685],
                   "declarations": [
                     {
                       "constant": false,

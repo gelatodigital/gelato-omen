@@ -11,24 +11,14 @@
   "ast": {
     "absolutePath": "@gnosis.pm/util-contracts/contracts/SignedSafeMath.sol",
     "exportedSymbols": {
-      "SignedSafeMath": [
-        8054
-      ]
+      "SignedSafeMath": [8054]
     },
     "id": 8055,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 7905,
-        "literals": [
-          "solidity",
-          ">=",
-          "0.4",
-          ".24",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", ">=", "0.4", ".24", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:32:18"
       },
@@ -39,9 +29,7 @@
         "documentation": "@title SignedSafeMath\n@dev Math operations with safety checks that throw on error",
         "fullyImplemented": true,
         "id": 8054,
-        "linearizedBaseContracts": [
-          8054
-        ],
+        "linearizedBaseContracts": [8054],
         "name": "SignedSafeMath",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -2151,24 +2139,14 @@
   "legacyAST": {
     "absolutePath": "@gnosis.pm/util-contracts/contracts/SignedSafeMath.sol",
     "exportedSymbols": {
-      "SignedSafeMath": [
-        8054
-      ]
+      "SignedSafeMath": [8054]
     },
     "id": 8055,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 7905,
-        "literals": [
-          "solidity",
-          ">=",
-          "0.4",
-          ".24",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", ">=", "0.4", ".24", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:32:18"
       },
@@ -2179,9 +2157,7 @@
         "documentation": "@title SignedSafeMath\n@dev Math operations with safety checks that throw on error",
         "fullyImplemented": true,
         "id": 8054,
-        "linearizedBaseContracts": [
-          8054
-        ],
+        "linearizedBaseContracts": [8054],
         "name": "SignedSafeMath",
         "nodeType": "ContractDefinition",
         "nodes": [

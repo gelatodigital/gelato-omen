@@ -43,24 +43,14 @@
   "ast": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/Create2CloneFactory.sol",
     "exportedSymbols": {
-      "Create2CloneFactory": [
-        88
-      ]
+      "Create2CloneFactory": [88]
     },
     "id": 89,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 1,
-        "literals": [
-          "solidity",
-          ">=",
-          "0.4",
-          ".24",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", ">=", "0.4", ".24", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:32:0"
       },
@@ -71,9 +61,7 @@
         "documentation": null,
         "fullyImplemented": false,
         "id": 88,
-        "linearizedBaseContracts": [
-          88
-        ],
+        "linearizedBaseContracts": [88],
         "name": "Create2CloneFactory",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -209,9 +197,7 @@
               "src": "306:1151:0",
               "statements": [
                 {
-                  "assignments": [
-                    24
-                  ],
+                  "assignments": [24],
                   "declarations": [
                     {
                       "constant": false,
@@ -332,9 +318,7 @@
                   "src": "316:87:0"
                 },
                 {
-                  "assignments": [
-                    32
-                  ],
+                  "assignments": [32],
                   "declarations": [
                     {
                       "constant": false,
@@ -750,9 +734,7 @@
                   },
                   "id": 64,
                   "initializationExpression": {
-                    "assignments": [
-                      43
-                    ],
+                    "assignments": [43],
                     "declarations": [
                       {
                         "constant": false,
@@ -841,9 +823,7 @@
                   "src": "1064:100:0"
                 },
                 {
-                  "assignments": [
-                    66
-                  ],
+                  "assignments": [66],
                   "declarations": [
                     {
                       "constant": false,
@@ -1179,10 +1159,7 @@
                       "id": 77,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "1403:7:0",
                       "typeDescriptions": {
@@ -1353,24 +1330,14 @@
   "legacyAST": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/Create2CloneFactory.sol",
     "exportedSymbols": {
-      "Create2CloneFactory": [
-        88
-      ]
+      "Create2CloneFactory": [88]
     },
     "id": 89,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 1,
-        "literals": [
-          "solidity",
-          ">=",
-          "0.4",
-          ".24",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", ">=", "0.4", ".24", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:32:0"
       },
@@ -1381,9 +1348,7 @@
         "documentation": null,
         "fullyImplemented": false,
         "id": 88,
-        "linearizedBaseContracts": [
-          88
-        ],
+        "linearizedBaseContracts": [88],
         "name": "Create2CloneFactory",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1519,9 +1484,7 @@
               "src": "306:1151:0",
               "statements": [
                 {
-                  "assignments": [
-                    24
-                  ],
+                  "assignments": [24],
                   "declarations": [
                     {
                       "constant": false,
@@ -1642,9 +1605,7 @@
                   "src": "316:87:0"
                 },
                 {
-                  "assignments": [
-                    32
-                  ],
+                  "assignments": [32],
                   "declarations": [
                     {
                       "constant": false,
@@ -2060,9 +2021,7 @@
                   },
                   "id": 64,
                   "initializationExpression": {
-                    "assignments": [
-                      43
-                    ],
+                    "assignments": [43],
                     "declarations": [
                       {
                         "constant": false,
@@ -2151,9 +2110,7 @@
                   "src": "1064:100:0"
                 },
                 {
-                  "assignments": [
-                    66
-                  ],
+                  "assignments": [66],
                   "declarations": [
                     {
                       "constant": false,
@@ -2489,10 +2446,7 @@
                       "id": 77,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "1403:7:0",
                       "typeDescriptions": {

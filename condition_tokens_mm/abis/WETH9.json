@@ -289,23 +289,14 @@
   "ast": {
     "absolutePath": "canonical-weth/contracts/WETH9.sol",
     "exportedSymbols": {
-      "WETH9": [
-        8300
-      ]
+      "WETH9": [8300]
     },
     "id": 8301,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 8056,
-        "literals": [
-          "solidity",
-          ">=",
-          "0.4",
-          ".22",
-          "<",
-          "0.6"
-        ],
+        "literals": ["solidity", ">=", "0.4", ".22", "<", "0.6"],
         "nodeType": "PragmaDirective",
         "src": "686:30:19"
       },
@@ -316,9 +307,7 @@
         "documentation": null,
         "fullyImplemented": true,
         "id": 8300,
-        "linearizedBaseContracts": [
-          8300
-        ],
+        "linearizedBaseContracts": [8300],
         "name": "WETH9",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1314,10 +1303,7 @@
                       "id": 8134,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "1490:7:19",
                       "typeDescriptions": {
@@ -2462,10 +2448,7 @@
                       "id": 8232,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "2175:7:19",
                       "typeDescriptions": {
@@ -2885,10 +2868,7 @@
                             "id": 8256,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              8712,
-                              8713
-                            ],
+                            "overloadedDeclarations": [8712, 8713],
                             "referencedDeclaration": 8712,
                             "src": "2295:7:19",
                             "typeDescriptions": {
@@ -3436,23 +3416,14 @@
   "legacyAST": {
     "absolutePath": "canonical-weth/contracts/WETH9.sol",
     "exportedSymbols": {
-      "WETH9": [
-        8300
-      ]
+      "WETH9": [8300]
     },
     "id": 8301,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 8056,
-        "literals": [
-          "solidity",
-          ">=",
-          "0.4",
-          ".22",
-          "<",
-          "0.6"
-        ],
+        "literals": ["solidity", ">=", "0.4", ".22", "<", "0.6"],
         "nodeType": "PragmaDirective",
         "src": "686:30:19"
       },
@@ -3463,9 +3434,7 @@
         "documentation": null,
         "fullyImplemented": true,
         "id": 8300,
-        "linearizedBaseContracts": [
-          8300
-        ],
+        "linearizedBaseContracts": [8300],
         "name": "WETH9",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -4461,10 +4430,7 @@
                       "id": 8134,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "1490:7:19",
                       "typeDescriptions": {
@@ -5609,10 +5575,7 @@
                       "id": 8232,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "2175:7:19",
                       "typeDescriptions": {
@@ -6032,10 +5995,7 @@
                             "id": 8256,
                             "name": "require",
                             "nodeType": "Identifier",
-                            "overloadedDeclarations": [
-                              8712,
-                              8713
-                            ],
+                            "overloadedDeclarations": [8712, 8713],
                             "referencedDeclaration": 8712,
                             "src": "2295:7:19",
                             "typeDescriptions": {

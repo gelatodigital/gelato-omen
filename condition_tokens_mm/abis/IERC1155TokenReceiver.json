@@ -101,21 +101,14 @@
   "ast": {
     "absolutePath": "@gnosis.pm/conditional-tokens-contracts/contracts/ERC1155/IERC1155TokenReceiver.sol",
     "exportedSymbols": {
-      "IERC1155TokenReceiver": [
-        6828
-      ]
+      "IERC1155TokenReceiver": [6828]
     },
     "id": 6829,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 6792,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:15"
       },
@@ -151,17 +144,12 @@
             "src": "239:7:15"
           }
         ],
-        "contractDependencies": [
-          8362
-        ],
+        "contractDependencies": [8362],
         "contractKind": "contract",
         "documentation": "@title ERC-1155 Multi Token Receiver Interface\n@dev See https://eips.ethereum.org/EIPS/eip-1155",
         "fullyImplemented": false,
         "id": 6828,
-        "linearizedBaseContracts": [
-          6828,
-          8362
-        ],
+        "linearizedBaseContracts": [6828, 8362],
         "name": "IERC1155TokenReceiver",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -569,21 +557,14 @@
   "legacyAST": {
     "absolutePath": "@gnosis.pm/conditional-tokens-contracts/contracts/ERC1155/IERC1155TokenReceiver.sol",
     "exportedSymbols": {
-      "IERC1155TokenReceiver": [
-        6828
-      ]
+      "IERC1155TokenReceiver": [6828]
     },
     "id": 6829,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 6792,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:15"
       },
@@ -619,17 +600,12 @@
             "src": "239:7:15"
           }
         ],
-        "contractDependencies": [
-          8362
-        ],
+        "contractDependencies": [8362],
         "contractKind": "contract",
         "documentation": "@title ERC-1155 Multi Token Receiver Interface\n@dev See https://eips.ethereum.org/EIPS/eip-1155",
         "fullyImplemented": false,
         "id": 6828,
-        "linearizedBaseContracts": [
-          6828,
-          8362
-        ],
+        "linearizedBaseContracts": [6828, 8362],
         "name": "IERC1155TokenReceiver",
         "nodeType": "ContractDefinition",
         "nodes": [

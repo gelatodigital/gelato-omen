@@ -43,24 +43,14 @@
   "ast": {
     "absolutePath": "@gnosis.pm/util-contracts/contracts/ConstructedCloneFactory.sol",
     "exportedSymbols": {
-      "ConstructedCloneFactory": [
-        6903
-      ]
+      "ConstructedCloneFactory": [6903]
     },
     "id": 6904,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 6830,
-        "literals": [
-          "solidity",
-          ">=",
-          "0.4",
-          ".24",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", ">=", "0.4", ".24", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:32:16"
       },
@@ -71,9 +61,7 @@
         "documentation": null,
         "fullyImplemented": false,
         "id": 6903,
-        "linearizedBaseContracts": [
-          6903
-        ],
+        "linearizedBaseContracts": [6903],
         "name": "ConstructedCloneFactory",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -209,9 +197,7 @@
               "src": "293:1072:16",
               "statements": [
                 {
-                  "assignments": [
-                    6851
-                  ],
+                  "assignments": [6851],
                   "declarations": [
                     {
                       "constant": false,
@@ -332,9 +318,7 @@
                   "src": "303:87:16"
                 },
                 {
-                  "assignments": [
-                    6859
-                  ],
+                  "assignments": [6859],
                   "declarations": [
                     {
                       "constant": false,
@@ -750,9 +734,7 @@
                   },
                   "id": 6891,
                   "initializationExpression": {
-                    "assignments": [
-                      6870
-                    ],
+                    "assignments": [6870],
                     "declarations": [
                       {
                         "constant": false,
@@ -978,10 +960,7 @@
                       "id": 6893,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "1329:7:16",
                       "typeDescriptions": {
@@ -1126,24 +1105,14 @@
   "legacyAST": {
     "absolutePath": "@gnosis.pm/util-contracts/contracts/ConstructedCloneFactory.sol",
     "exportedSymbols": {
-      "ConstructedCloneFactory": [
-        6903
-      ]
+      "ConstructedCloneFactory": [6903]
     },
     "id": 6904,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 6830,
-        "literals": [
-          "solidity",
-          ">=",
-          "0.4",
-          ".24",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", ">=", "0.4", ".24", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:32:16"
       },
@@ -1154,9 +1123,7 @@
         "documentation": null,
         "fullyImplemented": false,
         "id": 6903,
-        "linearizedBaseContracts": [
-          6903
-        ],
+        "linearizedBaseContracts": [6903],
         "name": "ConstructedCloneFactory",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1292,9 +1259,7 @@
               "src": "293:1072:16",
               "statements": [
                 {
-                  "assignments": [
-                    6851
-                  ],
+                  "assignments": [6851],
                   "declarations": [
                     {
                       "constant": false,
@@ -1415,9 +1380,7 @@
                   "src": "303:87:16"
                 },
                 {
-                  "assignments": [
-                    6859
-                  ],
+                  "assignments": [6859],
                   "declarations": [
                     {
                       "constant": false,
@@ -1833,9 +1796,7 @@
                   },
                   "id": 6891,
                   "initializationExpression": {
-                    "assignments": [
-                      6870
-                    ],
+                    "assignments": [6870],
                     "declarations": [
                       {
                         "constant": false,
@@ -2061,10 +2022,7 @@
                       "id": 6893,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "1329:7:16",
                       "typeDescriptions": {

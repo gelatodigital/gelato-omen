@@ -151,21 +151,14 @@
   "ast": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/Whitelist.sol",
     "exportedSymbols": {
-      "Whitelist": [
-        4627
-      ]
+      "Whitelist": [4627]
     },
     "id": 4628,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 4541,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:9"
       },
@@ -201,17 +194,12 @@
             "src": "222:7:9"
           }
         ],
-        "contractDependencies": [
-          8606
-        ],
+        "contractDependencies": [8606],
         "contractKind": "contract",
         "documentation": "@title Whitelist for adding/removing users from a whitelist\n @author Anton Shtylman - @InfiniteStyles",
         "fullyImplemented": true,
         "id": 4627,
-        "linearizedBaseContracts": [
-          4627,
-          8606
-        ],
+        "linearizedBaseContracts": [4627, 8606],
         "name": "Whitelist",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -548,9 +536,7 @@
                   },
                   "id": 4586,
                   "initializationExpression": {
-                    "assignments": [
-                      4567
-                    ],
+                    "assignments": [4567],
                     "declarations": [
                       {
                         "constant": false,
@@ -959,9 +945,7 @@
                   },
                   "id": 4620,
                   "initializationExpression": {
-                    "assignments": [
-                      4601
-                    ],
+                    "assignments": [4601],
                     "declarations": [
                       {
                         "constant": false,
@@ -1198,21 +1182,14 @@
   "legacyAST": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/Whitelist.sol",
     "exportedSymbols": {
-      "Whitelist": [
-        4627
-      ]
+      "Whitelist": [4627]
     },
     "id": 4628,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 4541,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:9"
       },
@@ -1248,17 +1225,12 @@
             "src": "222:7:9"
           }
         ],
-        "contractDependencies": [
-          8606
-        ],
+        "contractDependencies": [8606],
         "contractKind": "contract",
         "documentation": "@title Whitelist for adding/removing users from a whitelist\n @author Anton Shtylman - @InfiniteStyles",
         "fullyImplemented": true,
         "id": 4627,
-        "linearizedBaseContracts": [
-          4627,
-          8606
-        ],
+        "linearizedBaseContracts": [4627, 8606],
         "name": "Whitelist",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1595,9 +1567,7 @@
                   },
                   "id": 4586,
                   "initializationExpression": {
-                    "assignments": [
-                      4567
-                    ],
+                    "assignments": [4567],
                     "declarations": [
                       {
                         "constant": false,
@@ -2006,9 +1976,7 @@
                   },
                   "id": 4620,
                   "initializationExpression": {
-                    "assignments": [
-                      4601
-                    ],
+                    "assignments": [4601],
                     "declarations": [
                       {
                         "constant": false,

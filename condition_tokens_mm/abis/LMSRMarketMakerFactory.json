@@ -173,24 +173,15 @@
   "ast": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/LMSRMarketMakerFactory.sol",
     "exportedSymbols": {
-      "LMSRMarketMakerData": [
-        3196
-      ],
-      "LMSRMarketMakerFactory": [
-        3560
-      ]
+      "LMSRMarketMakerData": [3196],
+      "LMSRMarketMakerFactory": [3560]
     },
     "id": 3561,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 3126,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:6"
       },
@@ -313,9 +304,7 @@
         "documentation": null,
         "fullyImplemented": true,
         "id": 3196,
-        "linearizedBaseContracts": [
-          3196
-        ],
+        "linearizedBaseContracts": [3196],
         "name": "LMSRMarketMakerData",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1041,20 +1030,12 @@
             "src": "1517:19:6"
           }
         ],
-        "contractDependencies": [
-          3124,
-          3196,
-          6903
-        ],
+        "contractDependencies": [3124, 3196, 6903],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
         "id": 3560,
-        "linearizedBaseContracts": [
-          3560,
-          3196,
-          6903
-        ],
+        "linearizedBaseContracts": [3560, 3196, 6903],
         "name": "LMSRMarketMakerFactory",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -1423,13 +1404,7 @@
               "src": "1937:1516:6",
               "statements": [
                 {
-                  "assignments": [
-                    3235,
-                    3237,
-                    3240,
-                    3242,
-                    3244
-                  ],
+                  "assignments": [3235, 3237, 3240, 3242, 3244],
                   "declarations": [
                     {
                       "constant": false,
@@ -2467,10 +2442,7 @@
                       "id": 3291,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "2584:7:6",
                       "typeDescriptions": {
@@ -2903,9 +2875,7 @@
                     "src": "2964:203:6",
                     "statements": [
                       {
-                        "assignments": [
-                          3350
-                        ],
+                        "assignments": [3350],
                         "declarations": [
                           {
                             "constant": false,
@@ -3214,9 +3184,7 @@
                   },
                   "id": 3369,
                   "initializationExpression": {
-                    "assignments": [
-                      3339
-                    ],
+                    "assignments": [3339],
                     "declarations": [
                       {
                         "constant": false,
@@ -3391,10 +3359,7 @@
                       "id": 3370,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "3176:7:6",
                       "typeDescriptions": {
@@ -4099,9 +4064,7 @@
                   "src": "3729:16:6"
                 },
                 {
-                  "assignments": [
-                    3432
-                  ],
+                  "assignments": [3432],
                   "declarations": [
                     {
                       "constant": false,
@@ -4547,9 +4510,7 @@
                   },
                   "id": 3469,
                   "initializationExpression": {
-                    "assignments": [
-                      3445
-                    ],
+                    "assignments": [3445],
                     "declarations": [
                       {
                         "constant": false,
@@ -5955,24 +5916,15 @@
   "legacyAST": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/LMSRMarketMakerFactory.sol",
     "exportedSymbols": {
-      "LMSRMarketMakerData": [
-        3196
-      ],
-      "LMSRMarketMakerFactory": [
-        3560
-      ]
+      "LMSRMarketMakerData": [3196],
+      "LMSRMarketMakerFactory": [3560]
     },
     "id": 3561,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 3126,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:6"
       },
@@ -6095,9 +6047,7 @@
         "documentation": null,
         "fullyImplemented": true,
         "id": 3196,
-        "linearizedBaseContracts": [
-          3196
-        ],
+        "linearizedBaseContracts": [3196],
         "name": "LMSRMarketMakerData",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -6823,20 +6773,12 @@
             "src": "1517:19:6"
           }
         ],
-        "contractDependencies": [
-          3124,
-          3196,
-          6903
-        ],
+        "contractDependencies": [3124, 3196, 6903],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
         "id": 3560,
-        "linearizedBaseContracts": [
-          3560,
-          3196,
-          6903
-        ],
+        "linearizedBaseContracts": [3560, 3196, 6903],
         "name": "LMSRMarketMakerFactory",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -7205,13 +7147,7 @@
               "src": "1937:1516:6",
               "statements": [
                 {
-                  "assignments": [
-                    3235,
-                    3237,
-                    3240,
-                    3242,
-                    3244
-                  ],
+                  "assignments": [3235, 3237, 3240, 3242, 3244],
                   "declarations": [
                     {
                       "constant": false,
@@ -8249,10 +8185,7 @@
                       "id": 3291,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8712,
                       "src": "2584:7:6",
                       "typeDescriptions": {
@@ -8685,9 +8618,7 @@
                     "src": "2964:203:6",
                     "statements": [
                       {
-                        "assignments": [
-                          3350
-                        ],
+                        "assignments": [3350],
                         "declarations": [
                           {
                             "constant": false,
@@ -8996,9 +8927,7 @@
                   },
                   "id": 3369,
                   "initializationExpression": {
-                    "assignments": [
-                      3339
-                    ],
+                    "assignments": [3339],
                     "declarations": [
                       {
                         "constant": false,
@@ -9173,10 +9102,7 @@
                       "id": 3370,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "3176:7:6",
                       "typeDescriptions": {
@@ -9881,9 +9807,7 @@
                   "src": "3729:16:6"
                 },
                 {
-                  "assignments": [
-                    3432
-                  ],
+                  "assignments": [3432],
                   "declarations": [
                     {
                       "constant": false,
@@ -10329,9 +10253,7 @@
                   },
                   "id": 3469,
                   "initializationExpression": {
-                    "assignments": [
-                      3445
-                    ],
+                    "assignments": [3445],
                     "declarations": [
                       {
                         "constant": false,

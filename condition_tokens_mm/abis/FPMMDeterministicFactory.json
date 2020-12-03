@@ -345,21 +345,14 @@
   "ast": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/FPMMDeterministicFactory.sol",
     "exportedSymbols": {
-      "FPMMDeterministicFactory": [
-        956
-      ]
+      "FPMMDeterministicFactory": [956]
     },
     "id": 957,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 521,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:2"
       },
@@ -520,28 +513,12 @@
             "src": "687:20:2"
           }
         ],
-        "contractDependencies": [
-          88,
-          2354,
-          2445,
-          6679,
-          6828,
-          8352,
-          8362
-        ],
+        "contractDependencies": [88, 2354, 2445, 6679, 6828, 8352, 8362],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
         "id": 956,
-        "linearizedBaseContracts": [
-          956,
-          6679,
-          6828,
-          8352,
-          8362,
-          2445,
-          88
-        ],
+        "linearizedBaseContracts": [956, 6679, 6828, 8352, 8362, 2445, 88],
         "name": "FPMMDeterministicFactory",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -910,12 +887,7 @@
               "src": "1231:1329:2",
               "statements": [
                 {
-                  "assignments": [
-                    575,
-                    577,
-                    580,
-                    582
-                  ],
+                  "assignments": [575, 577, 580, 582],
                   "declarations": [
                     {
                       "constant": false,
@@ -1716,9 +1688,7 @@
                   "src": "1856:10:2"
                 },
                 {
-                  "assignments": [
-                    633
-                  ],
+                  "assignments": [633],
                   "declarations": [
                     {
                       "constant": false,
@@ -1895,9 +1865,7 @@
                     "src": "2026:212:2",
                     "statements": [
                       {
-                        "assignments": [
-                          657
-                        ],
+                        "assignments": [657],
                         "declarations": [
                           {
                             "constant": false,
@@ -2206,9 +2174,7 @@
                   },
                   "id": 676,
                   "initializationExpression": {
-                    "assignments": [
-                      646
-                    ],
+                    "assignments": [646],
                     "declarations": [
                       {
                         "constant": false,
@@ -2383,10 +2349,7 @@
                       "id": 677,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "2247:7:2",
                       "typeDescriptions": {
@@ -2769,10 +2732,7 @@
                       "id": 702,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "2462:7:2",
                       "typeDescriptions": {
@@ -3102,9 +3062,7 @@
                   "src": "2836:16:2"
                 },
                 {
-                  "assignments": [
-                    738
-                  ],
+                  "assignments": [738],
                   "declarations": [
                     {
                       "constant": false,
@@ -3550,9 +3508,7 @@
                   },
                   "id": 775,
                   "initializationExpression": {
-                    "assignments": [
-                      751
-                    ],
+                    "assignments": [751],
                     "declarations": [
                       {
                         "constant": false,
@@ -4691,9 +4647,7 @@
               "src": "4442:1053:2",
               "statements": [
                 {
-                  "assignments": [
-                    869
-                  ],
+                  "assignments": [869],
                   "declarations": [
                     {
                       "constant": false,
@@ -6212,21 +6166,14 @@
   "legacyAST": {
     "absolutePath": "/Users/Hilmar/code/integrations/conditional-tokens-market-makers/contracts/FPMMDeterministicFactory.sol",
     "exportedSymbols": {
-      "FPMMDeterministicFactory": [
-        956
-      ]
+      "FPMMDeterministicFactory": [956]
     },
     "id": 957,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 521,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".1"
-        ],
+        "literals": ["solidity", "^", "0.5", ".1"],
         "nodeType": "PragmaDirective",
         "src": "0:23:2"
       },
@@ -6387,28 +6334,12 @@
             "src": "687:20:2"
           }
         ],
-        "contractDependencies": [
-          88,
-          2354,
-          2445,
-          6679,
-          6828,
-          8352,
-          8362
-        ],
+        "contractDependencies": [88, 2354, 2445, 6679, 6828, 8352, 8362],
         "contractKind": "contract",
         "documentation": null,
         "fullyImplemented": true,
         "id": 956,
-        "linearizedBaseContracts": [
-          956,
-          6679,
-          6828,
-          8352,
-          8362,
-          2445,
-          88
-        ],
+        "linearizedBaseContracts": [956, 6679, 6828, 8352, 8362, 2445, 88],
         "name": "FPMMDeterministicFactory",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -6777,12 +6708,7 @@
               "src": "1231:1329:2",
               "statements": [
                 {
-                  "assignments": [
-                    575,
-                    577,
-                    580,
-                    582
-                  ],
+                  "assignments": [575, 577, 580, 582],
                   "declarations": [
                     {
                       "constant": false,
@@ -7583,9 +7509,7 @@
                   "src": "1856:10:2"
                 },
                 {
-                  "assignments": [
-                    633
-                  ],
+                  "assignments": [633],
                   "declarations": [
                     {
                       "constant": false,
@@ -7762,9 +7686,7 @@
                     "src": "2026:212:2",
                     "statements": [
                       {
-                        "assignments": [
-                          657
-                        ],
+                        "assignments": [657],
                         "declarations": [
                           {
                             "constant": false,
@@ -8073,9 +7995,7 @@
                   },
                   "id": 676,
                   "initializationExpression": {
-                    "assignments": [
-                      646
-                    ],
+                    "assignments": [646],
                     "declarations": [
                       {
                         "constant": false,
@@ -8250,10 +8170,7 @@
                       "id": 677,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "2247:7:2",
                       "typeDescriptions": {
@@ -8636,10 +8553,7 @@
                       "id": 702,
                       "name": "require",
                       "nodeType": "Identifier",
-                      "overloadedDeclarations": [
-                        8712,
-                        8713
-                      ],
+                      "overloadedDeclarations": [8712, 8713],
                       "referencedDeclaration": 8713,
                       "src": "2462:7:2",
                       "typeDescriptions": {
@@ -8969,9 +8883,7 @@
                   "src": "2836:16:2"
                 },
                 {
-                  "assignments": [
-                    738
-                  ],
+                  "assignments": [738],
                   "declarations": [
                     {
                       "constant": false,
@@ -9417,9 +9329,7 @@
                   },
                   "id": 775,
                   "initializationExpression": {
-                    "assignments": [
-                      751
-                    ],
+                    "assignments": [751],
                     "declarations": [
                       {
                         "constant": false,
@@ -10558,9 +10468,7 @@
               "src": "4442:1053:2",
               "statements": [
                 {
-                  "assignments": [
-                    869
-                  ],
+                  "assignments": [869],
                   "declarations": [
                     {
                       "constant": false,

@@ -31,21 +31,14 @@
   "ast": {
     "absolutePath": "openzeppelin-solidity/contracts/introspection/IERC165.sol",
     "exportedSymbols": {
-      "IERC165": [
-        8362
-      ]
+      "IERC165": [8362]
     },
     "id": 8363,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 8354,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:21"
       },
@@ -56,9 +49,7 @@
         "documentation": "@dev Interface of the ERC165 standard, as defined in the\n[EIP](https://eips.ethereum.org/EIPS/eip-165).\n * Implementers can declare support of contract interfaces, which can then be\nqueried by others (`ERC165Checker`).\n * For an implementation, see `ERC165`.",
         "fullyImplemented": false,
         "id": 8362,
-        "linearizedBaseContracts": [
-          8362
-        ],
+        "linearizedBaseContracts": [8362],
         "name": "IERC165",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -153,21 +144,14 @@
   "legacyAST": {
     "absolutePath": "openzeppelin-solidity/contracts/introspection/IERC165.sol",
     "exportedSymbols": {
-      "IERC165": [
-        8362
-      ]
+      "IERC165": [8362]
     },
     "id": 8363,
     "nodeType": "SourceUnit",
     "nodes": [
       {
         "id": 8354,
-        "literals": [
-          "solidity",
-          "^",
-          "0.5",
-          ".0"
-        ],
+        "literals": ["solidity", "^", "0.5", ".0"],
         "nodeType": "PragmaDirective",
         "src": "0:23:21"
       },
@@ -178,9 +162,7 @@
         "documentation": "@dev Interface of the ERC165 standard, as defined in the\n[EIP](https://eips.ethereum.org/EIPS/eip-165).\n * Implementers can declare support of contract interfaces, which can then be\nqueried by others (`ERC165Checker`).\n * For an implementation, see `ERC165`.",
         "fullyImplemented": false,
         "id": 8362,
-        "linearizedBaseContracts": [
-          8362
-        ],
+        "linearizedBaseContracts": [8362],
         "name": "IERC165",
         "nodeType": "ContractDefinition",
         "nodes": [

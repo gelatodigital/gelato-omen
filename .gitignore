@@ -4,3 +4,17 @@ node_modules
 # Envs
 .env
 
+#hardhat
+artifacts/
+cache/
+
+# ESLint
+.eslintcache
+
+# macOS
+.DS_Store
+*.icloud
+
+# yarn
+yarn-error.log
+
