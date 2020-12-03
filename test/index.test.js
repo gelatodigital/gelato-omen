@@ -25,7 +25,7 @@ const CPK = require("contract-proxy-kit");
 
 const GAS_LIMIT = 5000000;
 
-const INITIAL_FUNDS = ethers.utils.parseUnits("100", "18");
+const INITIAL_FUNDS = ethers.utils.parseUnits("500", "18");
 
 // Conditional Tokens
 const NUM_OUTCOMES = 10;
@@ -313,7 +313,7 @@ describe("Omen automated withdrawal test with Gelato", function () {
     // Fund Random User With ETH
     await wallet.sendTransaction({
       to: provider.address,
-      value: ethers.utils.parseEther("100"),
+      value: ethers.utils.parseEther("500"),
       gasLimit: GAS_LIMIT,
     });
 
@@ -675,16 +675,16 @@ describe("Omen automated withdrawal test with Gelato", function () {
     // ).to.emit(gelatoCore, "LogExecSuccess");
 
     // 🚧 For Debugging:
-    const txResponse2 = await gelatoCore.connect(wallet).exec(taskReceipt, {
+    await gelatoCore.connect(wallet).exec(taskReceipt, {
       gasPrice: gelatoGasPrice,
       gasLimit: 5000000,
     });
-    const { blockHash } = await txResponse2.wait();
-    const logs = await ethers.provider.getLogs({ blockHash });
-    const iFace = new ethers.utils.Interface(gelato.GelatoCore.abi);
-    for (const log of logs) {
-      console.log(iFace.parseLog(log).args.reason);
-    }
+    // const { blockHash } = await txResponse2.wait();
+    // const logs = await ethers.provider.getLogs({ blockHash });
+    // const iFace = new ethers.utils.Interface(gelato.GelatoCore.abi);
+    // for (const log of logs) {
+    //  console.log(iFace.parseLog(log).args.reason);
+    //}
 
     const providerPostBalance = await gelatoCore.providerFunds(
       provider.address
