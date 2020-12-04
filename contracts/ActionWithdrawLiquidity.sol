@@ -37,8 +37,11 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
 
     IGelatoSysAdmin public immutable gelatoCore;
     address public immutable provider;
+    // solhint-disable var-name-mixedcase
     address public immutable ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
+    // solhint-disable var-name-mixedcase
     IERC20 public immutable WETH;
+    // solhint-disable const-name-snakecase
     uint256 public constant OVERHEAD = 180000;
     IUniswapV2Router02 public immutable uniRouter;
     OracleAggregator public immutable oracleAggregator;
@@ -46,18 +49,20 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
     constructor(
         IGelatoSysAdmin _gelatoCore,
         address _provider,
-        IERC20 _WETH,
+        IERC20 _weth,
         IUniswapV2Router02 _uniRouter,
         OracleAggregator _oracleAggregator
     ) public {
         gelatoCore = _gelatoCore;
         provider = _provider;
-        WETH = _WETH;
+        WETH = _weth;
         uniRouter = _uniRouter;
         oracleAggregator = _oracleAggregator;
     }
 
     // ======= ACTION IMPLEMENTATION DETAILS =========
+    // solhint-disable function-max-lines
+    // solhint-disable code-complexity
     function action(
         IConditionalTokens _conditionalTokens,
         IFixedProductMarketMaker _fixedProductMarketMaker,

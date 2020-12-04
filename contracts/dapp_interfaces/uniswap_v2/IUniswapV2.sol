@@ -2,10 +2,6 @@
 pragma solidity ^0.6.10;
 
 interface IUniswapV2Router02 {
-    function factory() external pure returns (IUniswapV2Factory);
-
-    function WETH() external pure returns (address);
-
     function swapExactTokensForTokens(
         uint256 amountIn,
         uint256 amountOutMin,
@@ -43,6 +39,11 @@ interface IUniswapV2Router02 {
         external
         view
         returns (uint256[] memory amounts);
+
+    function factory() external pure returns (IUniswapV2Factory);
+
+    // solhint-disable func-name-mixedcase
+    function WETH() external pure returns (address);
 }
 
 interface IWETH {
@@ -52,6 +53,10 @@ interface IWETH {
 }
 
 interface IUniswapV2Factory {
+    function createPair(address tokenA, address tokenB)
+        external
+        returns (address pair);
+
     function getPair(address tokenA, address tokenB)
         external
         view
@@ -64,8 +69,4 @@ interface IUniswapV2Factory {
     function feeTo() external view returns (address);
 
     function feeToSetter() external view returns (address);
-
-    function createPair(address tokenA, address tokenB)
-        external
-        returns (address pair);
 }

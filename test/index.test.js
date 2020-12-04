@@ -116,7 +116,28 @@ describe("Omen automated withdrawal test with Gelato", function () {
     });
   });
 
-  it("buy DAI from Uniswap", async () => {
+  it("Verify Price Oracle expected return", async () => {
+    let x = await oracleAggregator.getExpectedReturnAmount(
+      ethers.utils.parseEther("1"),
+      "0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9",
+      "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984"
+    );
+    let y = await oracleAggregator.getExpectedReturnAmount(
+      ethers.utils.parseEther("1"),
+      "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+      "0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9"
+    );
+    expect(
+      Math.round(
+        Number(
+          (x / ethers.utils.parseEther("1")) *
+            (y / ethers.utils.parseEther("1"))
+        )
+      )
+    ).to.be.eq(1);
+  });
+
+  it("Buy DAI from Uniswap", async () => {
     // 1. instantiate contracts
     const uniswapFactoryContract = new ethers.Contract(
       uniswap.factory.address,
@@ -617,7 +638,7 @@ describe("Omen automated withdrawal test with Gelato", function () {
       parseFloat(fromWei(0))
     );
 
-    const providerPreBalance = await gelatoCore.providerFunds(providerAddress);
+    // const providerPreBalance = await gelatoCore.providerFunds(providerAddress);
 
     // // Should have buyAmount Specific conditional token balance
     // const indexSet = getIndexSets(NUM_OUTCOMES);
@@ -672,14 +693,14 @@ describe("Omen automated withdrawal test with Gelato", function () {
     //  console.log(iFace.parseLog(log).args.reason);
     // }
 
-    const providerPostBalance = await gelatoCore.providerFunds(providerAddress);
+    // const providerPostBalance = await gelatoCore.providerFunds(providerAddress);
 
-    const executionCost = providerPreBalance.sub(providerPostBalance);
+    // const executionCost = providerPreBalance.sub(providerPostBalance);
     // console.log(`Total Gelato Execution Cost: ${executionCost.toString()}`);
-    const gasConsumed = executionCost.div(gelatoGasPrice);
+    // const gasConsumed = executionCost.div(gelatoGasPrice);
     // console.log(`Gas Consumed: ${gasConsumed.toString()}`);
 
-    // ########### POST EXEUTION
+    // ########### POST EXECUTION
 
     // const execTxReceipt = await execTx.wait();
     // console.log(`Tx gasUsed: ${execTxReceipt.gasUsed.toString()}`);
@@ -704,7 +725,7 @@ describe("Omen automated withdrawal test with Gelato", function () {
 
     expect(poolTokenBalanceAfter).to.be.lt(poolTokenBalanceBefore);
 
-    const daiBalanceAfterUser = await dai.balanceOf(wallet.address);
+    // const daiBalanceAfterUser = await dai.balanceOf(wallet.address);
     // console.log(
     //   `Collateral Received back to User: ${parseFloat(
     //     fromWei(daiBalanceAfterUser)
