@@ -490,10 +490,10 @@
     "@ethersproject/properties" "^5.0.3"
     "@ethersproject/strings" "^5.0.4"
 
-"@gelatonetwork/core@1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@gelatonetwork/core/-/core-1.4.1.tgz#4e13368da1a0346217cf76e1ef5c1d0adcfdc870"
-  integrity sha512-6heuXhIewQ4B2qGe8QGg0het9/ixwIYfIE02QU9ATK/ULpBvZKsmj0NQ5K8l54XyoRvpNXhQYRendmSBE7Z7Sw==
+"@gelatonetwork/core@1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@gelatonetwork/core/-/core-1.5.1.tgz#829f2a899131b64a6c583f50d38a6b824f9517a0"
+  integrity sha512-ZJTD4D/EfcsM8Vm/MbotsA11QmV5QmNVq/YxskgjK/NPXp2LSa1RpzHnAudtA4GZ3B2Q5uX0olmemoN2h3lC0w==
 
 "@gnosis.pm/conditional-tokens-contracts@^1.0.1":
   version "1.0.3"

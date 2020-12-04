@@ -12,17 +12,12 @@ const { utils } = require("ethers");
 
 const GelatoCoreLib = require("@gelatonetwork/core");
 
-// const mainnetDeployments = require("./_hardhat/config/mainnet-deployments");
-
 // Process Env Variables
 require("dotenv").config();
 // const INFURA_ID = process.env.INFURA_ID;
 // assert.ok(INFURA_ID, "no Infura ID in process.env");
 const ALCHEMY_ID = process.env.ALCHEMY_ID;
 assert.ok(ALCHEMY_ID, "no Alchemy ID in process.env");
-
-// const DEPLOYER = "0x5B753BF02a42bC73B5846dfd16a8F2e082b99a6a"; // Gelato-Dev-Luis
-// const DEPLOYER_PK_MAINNET = process.env.DEPLOYER_PK_MAINNET;
 
 // ================================= CONFIG =========================================
 module.exports = {
@@ -33,18 +28,17 @@ module.exports = {
   //     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
   //   },
   // hardhat-deploy
-  //   namedAccounts: {
-  //     deployer: {
-  //       default: 0,
-  //       mainnet: DEPLOYER,
-  //     },
-  //     user: {
-  //       default: 0,
-  //     },
-  //     executor: {
-  //       default: 1,
-  //     },
-  //   },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+    },
+    user: {
+      default: 0,
+    },
+    executor: {
+      default: 1,
+    },
+  },
   networks: {
     hardhat: {
       // Standard config
@@ -57,6 +51,20 @@ module.exports = {
       // Accounts
       accounts: {
         accountsBalance: "1000000000000000000000000",
+      },
+      addresses: {
+        gelatoCore: "0x1d681d76ce96E4d70a88A00EBbcfc1E47808d0b8",
+        timeCondition: "0x63129681c487d231aa9148e1e21837165f38deaf",
+        gnosisSafeProviderModule: "0x3a994Cd3a464032B8d0eAa16F91C446A46c4fEbC",
+        weth: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+        uniswapV2Router02: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+        externalProvider: "0x3d9A46b5D421bb097AC28B4f70a4A1441A12920C",
+        timeCondition: "0x63129681c487d231aa9148e1e21837165f38deaf",
+        gnosisSafeProviderModule: "0x3a994Cd3a464032B8d0eAa16F91C446A46c4fEbC",
+        masterCopyAddress: "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F",
+        proxyFactoryAddress: "0x0fB4340432e56c014fa96286de17222822a9281b",
+        multiSendAddress: "0xB522a9f781924eD250A11C54105E51840B138AdD",
+        fallbackHandlerAddress: "0x40A930851BD2e590Bd5A5C981b436de25742E980",
       },
       // Custom
       //   ...mainnetDeployments,
@@ -79,24 +87,6 @@ module.exports = {
           optimizer: { enabled: true, runs: 200 },
         },
       },
-      //   {
-      //     version: "0.6.6",
-      //     settings: {
-      //       optimizer: { enabled: process.env.DEBUG ? false : true },
-      //     },
-      //   },
-      //   {
-      //     version: "0.6.10",
-      //     settings: {
-      //       optimizer: { enabled: process.env.DEBUG ? false : true },
-      //     },
-      //   },
-      //   {
-      //     version: "0.7.4",
-      //     settings: {
-      //       optimizer: { enabled: process.env.DEBUG ? false : true },
-      //     },
-      //   },
     ],
   },
 };

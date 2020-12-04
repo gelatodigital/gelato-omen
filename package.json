@@ -25,15 +25,14 @@
   ],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@chainlink/contracts": "0.0.11"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@gnosis.pm/conditional-tokens-contracts": "^1.0.1",
+    "@chainlink/contracts": "0.0.11",
     "@studydefi/money-legos": "^2.3.7",
     "contract-proxy-kit": "^1.1.2",
     "@codechecks/client": "0.1.10",
-    "@gelatonetwork/core": "1.4.1",
+    "@gelatonetwork/core": "1.5.1",
     "@nomiclabs/hardhat-ethers": "2.0.1",
     "@nomiclabs/hardhat-waffle": "2.0.0",
     "@openzeppelin/contracts": "3.3.0",
@@ -56,7 +55,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn install && yarn compile --force && yarn lint:sol && lint-staged",
+      "pre-commit": "yarn install && yarn compile --force && yarn lint:sol && lint-staged && yarn format",
       "pre-push": "git fetch origin && HUSKY_SKIP_HOOKS=1 git rebase origin/master && yarn test"
     }
   },
