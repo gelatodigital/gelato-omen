@@ -6,7 +6,6 @@ const { deployments, ethers } = hre;
 
 const erc20 = require("@studydefi/money-legos/erc20");
 const uniswap = require("@studydefi/money-legos/uniswap");
-const omen = require("../condition_tokens_mm");
 
 // Gelato
 const gelato = require("@gelatonetwork/core");
@@ -77,16 +76,16 @@ describe("Omen automated withdrawal test with Gelato", function () {
     );
 
     conditionalTokens = new ethers.Contract(
-      omen.conditionalTokens.address,
-      omen.conditionalTokens.abi,
+      hre.network.config.addresses.conditionalTokens,
+      hre.network.config.abis.conditionalTokensAbi,
       wallet
     );
 
     dai = new ethers.Contract(erc20.dai.address, erc20.dai.abi, wallet);
 
     fPMMDeterministicFactory = new ethers.Contract(
-      omen.fPMMDeterministicFactory.address,
-      omen.fPMMDeterministicFactory.abi,
+      hre.network.config.addresses.fPMMDeterministicFactory,
+      hre.network.config.abis.fPMMDeterministicFactoryAbi,
       wallet
     );
 
@@ -213,7 +212,9 @@ describe("Omen automated withdrawal test with Gelato", function () {
       topics: topics,
     };
 
-    let iface = new ethers.utils.Interface(omen.fPMMDeterministicFactory.abi);
+    let iface = new ethers.utils.Interface(
+      hre.network.config.abis.fPMMDeterministicFactoryAbi
+    );
 
     const logs = await wallet.provider.getLogs(filter);
 
@@ -223,7 +224,7 @@ describe("Omen automated withdrawal test with Gelato", function () {
 
     fixedProductMarketMaker = new ethers.Contract(
       event.args.fixedProductMarketMaker,
-      omen.fixedProductMarketMaker.abi,
+      hre.network.config.abis.fixedProductMarketMakerAbi,
       wallet
     );
   });

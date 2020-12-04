@@ -11,6 +11,7 @@ const assert = require("assert");
 const { utils } = require("ethers");
 
 const GelatoCoreLib = require("@gelatonetwork/core");
+const omenAbis = require("./condition_tokens_mm");
 
 // Process Env Variables
 require("dotenv").config();
@@ -65,7 +66,12 @@ module.exports = {
         proxyFactoryAddress: "0x0fB4340432e56c014fa96286de17222822a9281b",
         multiSendAddress: "0xB522a9f781924eD250A11C54105E51840B138AdD",
         fallbackHandlerAddress: "0x40A930851BD2e590Bd5A5C981b436de25742E980",
+        conditionalTokens: "0xC59b0e4De5F1248C1140964E0fF287B192407E0C",
+        fixedProductMarketMakerFactory:
+          "0x01FCd2353bBd92234A87FDC9d543ae995e61196C",
+        fPMMDeterministicFactory: "0x89023DEb1d9a9a62fF3A5ca8F23Be8d87A576220",
       },
+      ...omenAbis,
       // Custom
       //   ...mainnetDeployments,
     },
