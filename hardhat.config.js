@@ -55,8 +55,6 @@ module.exports = {
       },
       addresses: {
         gelatoCore: "0x1d681d76ce96E4d70a88A00EBbcfc1E47808d0b8",
-        timeCondition: "0x63129681c487d231aa9148e1e21837165f38deaf",
-        gnosisSafeProviderModule: "0x3a994Cd3a464032B8d0eAa16F91C446A46c4fEbC",
         weth: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
         uniswapV2Router02: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
         externalProvider: "0x3d9A46b5D421bb097AC28B4f70a4A1441A12920C",
@@ -70,6 +68,26 @@ module.exports = {
         fixedProductMarketMakerFactory:
           "0x01FCd2353bBd92234A87FDC9d543ae995e61196C",
         fPMMDeterministicFactory: "0x89023DEb1d9a9a62fF3A5ca8F23Be8d87A576220",
+        chainlink: {
+          AAVE_ETH: "0x6Df09E975c830ECae5bd4eD9d90f3A95a4f88012",
+          KNC_USD: "0xf8fF43E991A81e6eC886a3D281A2C6cC19aE70Fc",
+          KNC_ETH: "0x656c0544eF4C98A6a98491833A89204Abb045d6b",
+          SXP_USD: "0xFb0CfD6c19e25DB4a08D8a204a387cEa48Cc138f",
+          UNI_ETH: "0xD6aA3D25116d8dA79Ea0246c4826EB951872e02e",
+          USD_ETH: "0x986b5E1e1755e3C2440e960477f25201B0a8bbD4",
+          ETH_USD: "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
+          ADX_USD: "0x231e764B44b2C1b7Ca171fa8021A24ed520Cde10",
+        },
+        erc20: {
+          ETH: "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+          USDC: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+          DAI: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
+          UNI: "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984",
+          KNC: "0xdd974D5C2e2928deA5F71b9825b8b646686BD200",
+          SXP: "0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9",
+          AAVE: "0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9",
+          ADX: "0xADE00C28244d5CE17D72E40330B1c318cD12B7c3",
+        },
       },
       ...omenAbis,
       // Custom
