@@ -152,6 +152,7 @@ contract OracleAggregator is Ownable {
 
     // solhint-disable function-max-lines
     // solhint-disable code-complexity
+    /// @dev Get expected return amount for tokenA / tokenB
     function getExpectedReturnAmount(
         uint256 amount,
         address tokenAddressA,
@@ -311,7 +312,8 @@ contract OracleAggregator is Ownable {
         }
     }
 
-    // check the available oracles for token a & b and choose which oracles to use
+    /// @dev check the available oracles for token a & b
+    /// and choose which oracles to use
     function _checkAvailablePair(address tokenAddressA, address tokenAddressB)
         private
         view
@@ -359,7 +361,7 @@ contract OracleAggregator is Ownable {
         }
     }
 
-    // converting all usd pegged stablecoins to single USD address
+    /// @dev converting all usd pegged stablecoins to single USD address
     function _convertUSD(address tokenAddressA, address tokenAddressB)
         private
         view
@@ -379,7 +381,7 @@ contract OracleAggregator is Ownable {
         }
     }
 
-    // modify nrOfDecimlas and amount to follow stableCoin's nrOfDecimals
+    /// @dev modify nrOfDecimlas and amount to follow stableCoin's nrOfDecimals
     function _matchStableCoinDecimal(
         address stableCoinAddress,
         uint256 amount,
