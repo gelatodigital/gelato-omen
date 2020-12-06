@@ -1,9 +1,6 @@
 const { BigNumber } = require("ethers");
 const { expect } = require("chai");
-require("dotenv").config();
 const hre = require("hardhat");
-const { deployments, ethers } = hre;
-
 const erc20 = require("@studydefi/money-legos/erc20");
 const uniswap = require("@studydefi/money-legos/uniswap");
 
@@ -13,23 +10,18 @@ const gelato = require("@gelatonetwork/core");
 // CPK
 const CPK = require("contract-proxy-kit");
 
+const { deployments, ethers } = hre;
+const { fromWei, getIndexSets } = require("./helpers");
+
+// CONSTANTS
 const GAS_LIMIT = 5000000;
-
 const INITIAL_FUNDS = ethers.utils.parseUnits("500", "18");
-
-// Conditional Tokens
+// // Conditional Tokens
 const NUM_OUTCOMES = 10;
 const QUESTION_ID = ethers.constants.HashZero;
 const PARENT_COLLETION_ID = ethers.constants.HashZero;
 
-const fromWei = (x) => ethers.utils.formatUnits(x, 18);
-
-const getIndexSets = (outcomesCount) => {
-  const range = (length) => [...Array(length)].map((x, i) => i);
-  return range(outcomesCount).map((x) => 1 << x);
-};
-
-describe("Omen automated withdrawal test with Gelato", function () {
+describe("ActionWithdrawLiquidity.sol test", function () {
   this.timeout(0);
 
   let wallet;
@@ -48,7 +40,6 @@ describe("Omen automated withdrawal test with Gelato", function () {
   let provider;
   let task;
   let taskReceipt;
-  let oracleAggregator;
   let providerAddress;
 
   before(async () => {
@@ -59,47 +50,38 @@ describe("Omen automated withdrawal test with Gelato", function () {
       hre.network.config.addresses.externalProvider
     );
     providerAddress = await provider.getAddress();
+
     await hre.network.provider.request({
       method: "hardhat_impersonateAccount",
       params: [providerAddress],
     });
+    // Unlock Gelato Provider END
 
     admin = await wallet.getAddress();
 
     // Deploy ActionWithdrawLiquidity and OracleAggregator
     await deployments.fixture();
 
-    oracleAggregator = await ethers.getContract("OracleAggregator");
-
     actionLiquidityWithdraw = await ethers.getContract(
       "ActionWithdrawLiquidity"
     );
 
-    conditionalTokens = new ethers.Contract(
-      hre.network.config.addresses.conditionalTokens,
+    conditionalTokens = await ethers.getContractAt(
       hre.network.config.abis.conditionalTokensAbi,
-      wallet
+      hre.network.config.addresses.conditionalTokens
     );
 
-    dai = new ethers.Contract(erc20.dai.address, erc20.dai.abi, wallet);
+    dai = await ethers.getContractAt(erc20.dai.abi, erc20.dai.address);
 
-    fPMMDeterministicFactory = new ethers.Contract(
-      hre.network.config.addresses.fPMMDeterministicFactory,
+    fPMMDeterministicFactory = await ethers.getContractAt(
       hre.network.config.abis.fPMMDeterministicFactoryAbi,
-      wallet
+      hre.network.config.addresses.fPMMDeterministicFactory
     );
 
-    gelatoCore = new ethers.Contract(
-      hre.network.config.addresses.gelatoCore,
+    gelatoCore = await ethers.getContractAt(
       gelato.GelatoCore.abi,
-      wallet
+      hre.network.config.addresses.gelatoCore
     );
-
-    // uniRouterV2 = new ethers.Contract(
-    //   gelatoContracts.uniswapV2Router.address,
-    //   gelatoContracts.uniswapV2Router.abi,
-    //   wallet
-    // );
 
     cpk = await CPK.create({
       ethers,
@@ -116,11 +98,11 @@ describe("Omen automated withdrawal test with Gelato", function () {
     });
   });
 
-  it("buy DAI from Uniswap", async () => {
+  it("Buy DAI from Uniswap", async () => {
     // 1. instantiate contracts
-    const uniswapFactoryContract = new ethers.Contract(
-      uniswap.factory.address,
+    const uniswapFactoryContract = await ethers.getContractAt(
       uniswap.factory.abi,
+      uniswap.factory.address,
       wallet
     );
 
@@ -130,9 +112,9 @@ describe("Omen automated withdrawal test with Gelato", function () {
         gasLimit: GAS_LIMIT,
       }
     );
-    daiExchangeContract = new ethers.Contract(
-      daiExchangeAddress,
+    daiExchangeContract = await ethers.getContractAt(
       uniswap.exchange.abi,
+      daiExchangeAddress,
       wallet
     );
 
@@ -222,10 +204,9 @@ describe("Omen automated withdrawal test with Gelato", function () {
 
     let event = iface.parseLog(log);
 
-    fixedProductMarketMaker = new ethers.Contract(
-      event.args.fixedProductMarketMaker,
+    fixedProductMarketMaker = await ethers.getContractAt(
       hre.network.config.abis.fixedProductMarketMakerAbi,
-      wallet
+      event.args.fixedProductMarketMaker
     );
   });
 
@@ -429,26 +410,6 @@ describe("Omen automated withdrawal test with Gelato", function () {
 
     await enableModuleTx.transactionResponse.wait();
 
-    // const batchProvideTx = await cpk.execTransactions(
-    //   [
-    //     {
-    //       to: gelatoCore.address,
-    //       operation: CPK.CALL,
-    //       value: proxyEtherBalance, // Deposit 1 eth on Gelato,
-    //       data: ifaceGelato.encodeFunctionData("multiProvide", [
-    //         wallet.address, // Executor address (in this case user is its own executor)
-    //         [],
-    //         [gelatoAddresses.gnosisSafeProviderModule],
-    //       ]),
-    //     },
-    //   ],
-    //   {
-    //     gasLimit: 5000000,
-    //   }
-    // );
-
-    // await batchProvideTx.transactionResponse.wait();
-
     const myGelatoProvider = {
       addr: providerAddress,
       module: hre.network.config.addresses.gnosisSafeProviderModule,
@@ -575,9 +536,9 @@ describe("Omen automated withdrawal test with Gelato", function () {
     const gelatoGasPriceOracleAddress = await gelatoCore.gelatoGasPriceOracle();
 
     // Get gelatoGasPriceOracleAddress
-    const gelatoGasPriceOracle = new ethers.Contract(
-      gelatoGasPriceOracleAddress,
+    const gelatoGasPriceOracle = await ethers.getContractAt(
       oracleAbi,
+      gelatoGasPriceOracleAddress,
       wallet
     );
 
@@ -617,41 +578,6 @@ describe("Omen automated withdrawal test with Gelato", function () {
       parseFloat(fromWei(0))
     );
 
-    const providerPreBalance = await gelatoCore.providerFunds(providerAddress);
-
-    // // Should have buyAmount Specific conditional token balance
-    // const indexSet = getIndexSets(NUM_OUTCOMES);
-    // const positionIds = [];
-    // const addresses = [];
-    // for (const index of indexSet) {
-    //   const collectionId = await conditionalTokens.getCollectionId(
-    //     PARENT_COLLETION_ID,
-    //     conditionId,
-    //     index
-    //   );
-    //   const positionId = await conditionalTokens.getPositionId(
-    //     dai.address,
-    //     collectionId
-    //   );
-    //   positionIds.push(positionId);
-    //   addresses.push(cpk.address);
-    // }
-
-    // let conditionalTokenBalances = await conditionalTokens.balanceOfBatch(
-    //   addresses,
-    //   positionIds
-    // );
-
-    // console.log(conditionalTokenBalances);
-
-    // const smallestConditionalTokenBalance = conditionalTokenBalances.reduce(
-    //   (min, amount) => (amount.lt(min) ? amount : min)
-    // );
-
-    // console.log(
-    //   `Smallest Conditional Token Balance: ${smallestConditionalTokenBalance.toString()}`
-    // );
-
     // ########### PRE EXEUTION
     await expect(
       gelatoCore.connect(wallet).exec(taskReceipt, {
@@ -672,14 +598,14 @@ describe("Omen automated withdrawal test with Gelato", function () {
     //  console.log(iFace.parseLog(log).args.reason);
     // }
 
-    const providerPostBalance = await gelatoCore.providerFunds(providerAddress);
+    // const providerPostBalance = await gelatoCore.providerFunds(providerAddress);
 
-    const executionCost = providerPreBalance.sub(providerPostBalance);
+    // const executionCost = providerPreBalance.sub(providerPostBalance);
     // console.log(`Total Gelato Execution Cost: ${executionCost.toString()}`);
-    const gasConsumed = executionCost.div(gelatoGasPrice);
+    // const gasConsumed = executionCost.div(gelatoGasPrice);
     // console.log(`Gas Consumed: ${gasConsumed.toString()}`);
 
-    // ########### POST EXEUTION
+    // ########### POST EXECUTION
 
     // const execTxReceipt = await execTx.wait();
     // console.log(`Tx gasUsed: ${execTxReceipt.gasUsed.toString()}`);
@@ -704,7 +630,7 @@ describe("Omen automated withdrawal test with Gelato", function () {
 
     expect(poolTokenBalanceAfter).to.be.lt(poolTokenBalanceBefore);
 
-    const daiBalanceAfterUser = await dai.balanceOf(wallet.address);
+    // const daiBalanceAfterUser = await dai.balanceOf(wallet.address);
     // console.log(
     //   `Collateral Received back to User: ${parseFloat(
     //     fromWei(daiBalanceAfterUser)
