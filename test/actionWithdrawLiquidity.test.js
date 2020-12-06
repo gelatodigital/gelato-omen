@@ -1,9 +1,6 @@
 const { BigNumber } = require("ethers");
 const { expect } = require("chai");
-require("dotenv").config();
 const hre = require("hardhat");
-const { deployments, ethers } = hre;
-
 const erc20 = require("@studydefi/money-legos/erc20");
 const uniswap = require("@studydefi/money-legos/uniswap");
 
@@ -13,41 +10,18 @@ const gelato = require("@gelatonetwork/core");
 // CPK
 const CPK = require("contract-proxy-kit");
 
+const { deployments, ethers } = hre;
+const { fromWei, getIndexSets } = require("./helpers");
+
+// CONSTANTS
 const GAS_LIMIT = 5000000;
-
 const INITIAL_FUNDS = ethers.utils.parseUnits("500", "18");
-
-// Conditional Tokens
+// // Conditional Tokens
 const NUM_OUTCOMES = 10;
 const QUESTION_ID = ethers.constants.HashZero;
 const PARENT_COLLETION_ID = ethers.constants.HashZero;
 
-const fromWei = (x) => ethers.utils.formatUnits(x, 18);
-
-const getIndexSets = (outcomesCount) => {
-  const range = (length) => [...Array(length)].map((x, i) => i);
-  return range(outcomesCount).map((x) => 1 << x);
-};
-
-const chainlinkAggregatorArtifact = hre.artifacts.readArtifactSync(
-  "AggregatorV3Interface"
-);
-
-const getPriceFromOracle = async (oracleAddress) => {
-  const ChainlinkOracle = await ethers.getContractAt(
-    chainlinkAggregatorArtifact.abi,
-    oracleAddress
-  );
-
-  const oracleData = await ChainlinkOracle.latestRoundData();
-  const oracleDecimals = await ChainlinkOracle.decimals();
-  const oraclePrice =
-    parseInt(oracleData.answer) / Math.pow(10, parseInt(oracleDecimals));
-
-  return oraclePrice;
-};
-
-describe("Omen automated withdrawal test with Gelato", function () {
+describe("ActionWithdrawLiquidity.sol test", function () {
   this.timeout(0);
 
   let wallet;
@@ -66,7 +40,6 @@ describe("Omen automated withdrawal test with Gelato", function () {
   let provider;
   let task;
   let taskReceipt;
-  let oracleAggregator;
   let providerAddress;
 
   before(async () => {
@@ -77,47 +50,38 @@ describe("Omen automated withdrawal test with Gelato", function () {
       hre.network.config.addresses.externalProvider
     );
     providerAddress = await provider.getAddress();
+
     await hre.network.provider.request({
       method: "hardhat_impersonateAccount",
       params: [providerAddress],
     });
+    // Unlock Gelato Provider END
 
     admin = await wallet.getAddress();
 
     // Deploy ActionWithdrawLiquidity and OracleAggregator
     await deployments.fixture();
 
-    oracleAggregator = await ethers.getContract("OracleAggregator");
-
     actionLiquidityWithdraw = await ethers.getContract(
       "ActionWithdrawLiquidity"
     );
 
-    conditionalTokens = new ethers.Contract(
-      hre.network.config.addresses.conditionalTokens,
+    conditionalTokens = await ethers.getContractAt(
       hre.network.config.abis.conditionalTokensAbi,
-      wallet
+      hre.network.config.addresses.conditionalTokens
     );
 
-    dai = new ethers.Contract(erc20.dai.address, erc20.dai.abi, wallet);
+    dai = await ethers.getContractAt(erc20.dai.abi, erc20.dai.address);
 
-    fPMMDeterministicFactory = new ethers.Contract(
-      hre.network.config.addresses.fPMMDeterministicFactory,
+    fPMMDeterministicFactory = await ethers.getContractAt(
       hre.network.config.abis.fPMMDeterministicFactoryAbi,
-      wallet
+      hre.network.config.addresses.fPMMDeterministicFactory
     );
 
-    gelatoCore = new ethers.Contract(
-      hre.network.config.addresses.gelatoCore,
+    gelatoCore = await ethers.getContractAt(
       gelato.GelatoCore.abi,
-      wallet
+      hre.network.config.addresses.gelatoCore
     );
-
-    // uniRouterV2 = new ethers.Contract(
-    //   gelatoContracts.uniswapV2Router.address,
-    //   gelatoContracts.uniswapV2Router.abi,
-    //   wallet
-    // );
 
     cpk = await CPK.create({
       ethers,
@@ -134,150 +98,11 @@ describe("Omen automated withdrawal test with Gelato", function () {
     });
   });
 
-  it("Verify Price Oracle expected return", async () => {
-    const ether = ethers.utils.parseEther("1");
-    const decimals = {
-      DAI: ether,
-      ETH: ether,
-      USDC: 10 ** 6,
-      UNI: ether,
-      KNC: ether,
-      SXP: ether,
-      AAVE: ether,
-      ADX: ether,
-    };
-
-    // Test 'basic' pairs i.e. pairs that have a direct chainlink oracle lookup
-    const basicPairs = [
-      ["DAI", "ETH", hre.network.config.addresses.chainlink.USD_ETH],
-      ["ETH", "USDC", hre.network.config.addresses.chainlink.ETH_USD],
-      ["AAVE", "ETH", hre.network.config.addresses.chainlink.AAVE_ETH],
-      ["KNC", "USDC", hre.network.config.addresses.chainlink.KNC_USD],
-      ["KNC", "ETH", hre.network.config.addresses.chainlink.KNC_ETH],
-      ["ADX", "DAI", hre.network.config.addresses.chainlink.ADX_USD],
-      ["SXP", "USDC", hre.network.config.addresses.chainlink.SXP_USD],
-      ["UNI", "ETH", hre.network.config.addresses.chainlink.UNI_ETH],
-    ];
-    for (let i = 0; i < basicPairs.length; i++) {
-      let [tokenA, tokenB, chainlinkOracle] = basicPairs[i];
-      let rawAmount = await oracleAggregator.getExpectedReturnAmount(
-        decimals[tokenA],
-        hre.network.config.addresses.erc20[tokenA],
-        hre.network.config.addresses.erc20[tokenB]
-      );
-      let amount = rawAmount / decimals[tokenB];
-      console.log(`    - 1 ${tokenA} is worth ${amount.toFixed(4)} ${tokenB}`);
-      let check = await getPriceFromOracle(chainlinkOracle);
-      expect(Number(amount).toFixed(3)).to.be.eq(Number(check).toFixed(3));
-    }
-
-    // Test 'inverse' pairs i.e. the basic pairs but in reverse order from chainlink oracle
-    const inversePairs = [
-      ["ETH", "AAVE", hre.network.config.addresses.chainlink.AAVE_ETH],
-      ["USDC", "KNC", hre.network.config.addresses.chainlink.KNC_USD],
-      ["ETH", "KNC", hre.network.config.addresses.chainlink.KNC_ETH],
-      ["DAI", "ADX", hre.network.config.addresses.chainlink.ADX_USD],
-      ["USDC", "SXP", hre.network.config.addresses.chainlink.SXP_USD],
-      ["ETH", "UNI", hre.network.config.addresses.chainlink.UNI_ETH],
-    ];
-    for (let j = 0; j < inversePairs.length; j++) {
-      let [tokenA, tokenB, chainlinkOracle] = inversePairs[j];
-      let rawAmount = await oracleAggregator.getExpectedReturnAmount(
-        decimals[tokenA],
-        hre.network.config.addresses.erc20[tokenA],
-        hre.network.config.addresses.erc20[tokenB]
-      );
-      let amount = rawAmount / decimals[tokenB];
-      console.log(`    - 1 ${tokenA} is worth ${amount.toFixed(4)} ${tokenB}`);
-      let check = await getPriceFromOracle(chainlinkOracle);
-      expect(Math.abs(Number(amount - 1 / check))).to.be.lt(
-        Number(amount / 100)
-      );
-    }
-
-    // Test 'hard' pairs i.e. pairs that utilize multiple chainlink lookups to compute result
-    let amounts = [];
-    const hardPairs = [
-      ["UNI", "SXP"],
-      ["SXP", "UNI"],
-      ["UNI", "USDC"],
-      ["SXP", "ETH"],
-      ["ADX", "ETH"],
-      ["AAVE", "DAI"],
-      ["AAVE", "ADX"],
-      ["ADX", "AAVE"],
-      ["AAVE", "SXP"],
-      ["SXP", "ADX"],
-      ["ADX", "SXP"],
-      ["AAVE", "UNI"],
-      ["UNI", "AAVE"],
-      ["ADX", "UNI"],
-      ["UNI", "ADX"],
-    ];
-    for (let k = 0; k < hardPairs.length; k++) {
-      let [tokenA, tokenB] = hardPairs[k];
-      let rawAmount = await oracleAggregator.getExpectedReturnAmount(
-        decimals[tokenA],
-        hre.network.config.addresses.erc20[tokenA],
-        hre.network.config.addresses.erc20[tokenB]
-      );
-      let amount = rawAmount / decimals[tokenB];
-      amounts.push(amount);
-      console.log(`    - 1 ${tokenA} is worth ${amount.toFixed(4)} ${tokenB}`);
-    }
-    let [
-      uniSxp,
-      sxpUni,
-      uniUsd,
-      sxpEth,
-      adxEth,
-      aaveUsd,
-      aaveAdx,
-      adxAave,
-      aaveSxp,
-      sxpAdx,
-      adxSxp,
-      aaveUni,
-      uniAave,
-      adxUni,
-      uniAdx,
-    ] = amounts;
-    expect(Math.round(Number(uniSxp * sxpUni))).to.be.eq(1);
-    expect(Math.round(Number(aaveAdx * adxAave))).to.be.eq(1);
-    expect(Math.round(Number(sxpAdx * adxSxp))).to.be.eq(1);
-    expect(Math.round(Number(aaveUni * uniAave))).to.be.eq(1);
-    expect(Math.round(Number(adxUni * uniAdx))).to.be.eq(1);
-    let sxpUsd = await getPriceFromOracle(
-      hre.network.config.addresses.chainlink.SXP_USD
-    );
-    let adxUsd = await getPriceFromOracle(
-      hre.network.config.addresses.chainlink.ADX_USD
-    );
-    let uniEth = await getPriceFromOracle(
-      hre.network.config.addresses.chainlink.UNI_ETH
-    );
-    let aaveEth = await getPriceFromOracle(
-      hre.network.config.addresses.chainlink.AAVE_ETH
-    );
-    expect(Math.abs(Number(uniUsd * sxpUni - sxpUsd))).to.be.lt(
-      Number(sxpUsd / 100)
-    );
-    expect(Math.abs(Number(aaveUsd * adxAave - adxUsd))).to.be.lt(
-      Number(adxUsd / 100)
-    );
-    expect(Math.abs(Number(sxpEth * aaveSxp - aaveEth))).to.be.lt(
-      Number(aaveEth / 100)
-    );
-    expect(Math.abs(Number(adxEth * uniAdx - uniEth))).to.be.lt(
-      Number(uniEth / 100)
-    );
-  });
-
   it("Buy DAI from Uniswap", async () => {
     // 1. instantiate contracts
-    const uniswapFactoryContract = new ethers.Contract(
-      uniswap.factory.address,
+    const uniswapFactoryContract = await ethers.getContractAt(
       uniswap.factory.abi,
+      uniswap.factory.address,
       wallet
     );
 
@@ -287,9 +112,9 @@ describe("Omen automated withdrawal test with Gelato", function () {
         gasLimit: GAS_LIMIT,
       }
     );
-    daiExchangeContract = new ethers.Contract(
-      daiExchangeAddress,
+    daiExchangeContract = await ethers.getContractAt(
       uniswap.exchange.abi,
+      daiExchangeAddress,
       wallet
     );
 
@@ -379,10 +204,9 @@ describe("Omen automated withdrawal test with Gelato", function () {
 
     let event = iface.parseLog(log);
 
-    fixedProductMarketMaker = new ethers.Contract(
-      event.args.fixedProductMarketMaker,
+    fixedProductMarketMaker = await ethers.getContractAt(
       hre.network.config.abis.fixedProductMarketMakerAbi,
-      wallet
+      event.args.fixedProductMarketMaker
     );
   });
 
@@ -586,26 +410,6 @@ describe("Omen automated withdrawal test with Gelato", function () {
 
     await enableModuleTx.transactionResponse.wait();
 
-    // const batchProvideTx = await cpk.execTransactions(
-    //   [
-    //     {
-    //       to: gelatoCore.address,
-    //       operation: CPK.CALL,
-    //       value: proxyEtherBalance, // Deposit 1 eth on Gelato,
-    //       data: ifaceGelato.encodeFunctionData("multiProvide", [
-    //         wallet.address, // Executor address (in this case user is its own executor)
-    //         [],
-    //         [gelatoAddresses.gnosisSafeProviderModule],
-    //       ]),
-    //     },
-    //   ],
-    //   {
-    //     gasLimit: 5000000,
-    //   }
-    // );
-
-    // await batchProvideTx.transactionResponse.wait();
-
     const myGelatoProvider = {
       addr: providerAddress,
       module: hre.network.config.addresses.gnosisSafeProviderModule,
@@ -732,9 +536,9 @@ describe("Omen automated withdrawal test with Gelato", function () {
     const gelatoGasPriceOracleAddress = await gelatoCore.gelatoGasPriceOracle();
 
     // Get gelatoGasPriceOracleAddress
-    const gelatoGasPriceOracle = new ethers.Contract(
-      gelatoGasPriceOracleAddress,
+    const gelatoGasPriceOracle = await ethers.getContractAt(
       oracleAbi,
+      gelatoGasPriceOracleAddress,
       wallet
     );
 
@@ -773,41 +577,6 @@ describe("Omen automated withdrawal test with Gelato", function () {
     expect(parseFloat(fromWei(daiBalanceBeforeUser))).to.be.eq(
       parseFloat(fromWei(0))
     );
-
-    // const providerPreBalance = await gelatoCore.providerFunds(providerAddress);
-
-    // // Should have buyAmount Specific conditional token balance
-    // const indexSet = getIndexSets(NUM_OUTCOMES);
-    // const positionIds = [];
-    // const addresses = [];
-    // for (const index of indexSet) {
-    //   const collectionId = await conditionalTokens.getCollectionId(
-    //     PARENT_COLLETION_ID,
-    //     conditionId,
-    //     index
-    //   );
-    //   const positionId = await conditionalTokens.getPositionId(
-    //     dai.address,
-    //     collectionId
-    //   );
-    //   positionIds.push(positionId);
-    //   addresses.push(cpk.address);
-    // }
-
-    // let conditionalTokenBalances = await conditionalTokens.balanceOfBatch(
-    //   addresses,
-    //   positionIds
-    // );
-
-    // console.log(conditionalTokenBalances);
-
-    // const smallestConditionalTokenBalance = conditionalTokenBalances.reduce(
-    //   (min, amount) => (amount.lt(min) ? amount : min)
-    // );
-
-    // console.log(
-    //   `Smallest Conditional Token Balance: ${smallestConditionalTokenBalance.toString()}`
-    // );
 
     // ########### PRE EXEUTION
     await expect(
