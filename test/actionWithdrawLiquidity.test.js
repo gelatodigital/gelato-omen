@@ -19,7 +19,7 @@ const INITIAL_FUNDS = ethers.utils.parseUnits("500", "18");
 // // Conditional Tokens
 const NUM_OUTCOMES = 10;
 const QUESTION_ID = ethers.constants.HashZero;
-const PARENT_COLLETION_ID = ethers.constants.HashZero;
+const PARENT_COLLECTION_ID = ethers.constants.HashZero;
 
 describe("ActionWithdrawLiquidity.sol test", function () {
   this.timeout(0);
@@ -29,11 +29,17 @@ describe("ActionWithdrawLiquidity.sol test", function () {
   let conditionalTokens;
   let fPMMDeterministicFactory;
   let dai;
-  let fixedProductMarketMaker;
+  let gno;
+  let rep;
+  let fixedProductMarketMakerDai;
+  let fixedProductMarketMakerGno;
+  let fixedProductMarketMakerRep;
   let gelatoCore;
   let cpk;
   let taskSubmitTxReceipt;
-  let conditionId;
+  let conditionIdDai;
+  let conditionIdGno;
+  let conditionIdRep;
   let executionTime;
   let actionLiquidityWithdraw;
   let daiExchangeContract;
@@ -72,6 +78,14 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     );
 
     dai = await ethers.getContractAt(erc20.dai.abi, erc20.dai.address);
+    gno = await ethers.getContractAt(
+      erc20.dai.abi,
+      hre.network.config.addresses.erc20.GNO
+    );
+    rep = await ethers.getContractAt(
+      erc20.dai.abi,
+      hre.network.config.addresses.erc20.REP
+    );
 
     fPMMDeterministicFactory = await ethers.getContractAt(
       hre.network.config.abis.fPMMDeterministicFactoryAbi,
@@ -98,7 +112,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     });
   });
 
-  it("Buy DAI from Uniswap", async () => {
+  it("Buy Tokens from Uniswap", async () => {
     // 1. instantiate contracts
     const uniswapFactoryContract = await ethers.getContractAt(
       uniswap.factory.abi,
@@ -112,13 +126,14 @@ describe("ActionWithdrawLiquidity.sol test", function () {
         gasLimit: GAS_LIMIT,
       }
     );
+
     daiExchangeContract = await ethers.getContractAt(
       uniswap.exchange.abi,
       daiExchangeAddress,
       wallet
     );
 
-    // 2. do the actual swapping
+    // 2. do the actual swapping for DAI
     await daiExchangeContract.ethToTokenSwapOutput(
       INITIAL_FUNDS.mul(BigNumber.from("2")), // min amount of token retrieved
       2525644800, // random timestamp in the future (year 2050)
@@ -132,17 +147,80 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     const daiBalanceWei = await dai.balanceOf(wallet.address, {
       gasLimit: GAS_LIMIT,
     });
+
     const daiBalance = parseFloat(fromWei(daiBalanceWei));
     expect(daiBalance).to.be.gt(0);
+
+    // Repeat steps for GNO
+    const gnoExchangeAddress = await uniswapFactoryContract.getExchange(
+      gno.address,
+      {
+        gasLimit: GAS_LIMIT,
+      }
+    );
+
+    let gnoExchangeContract = await ethers.getContractAt(
+      uniswap.exchange.abi,
+      gnoExchangeAddress,
+      wallet
+    );
+
+    await gnoExchangeContract.ethToTokenSwapOutput(
+      ethers.utils.parseEther("10").toString(),
+      2525644800,
+      {
+        gasLimit: GAS_LIMIT,
+        value: ethers.utils.parseEther("300").toString(),
+      }
+    );
+
+    const gnoBalanceWei = await gno.balanceOf(wallet.address, {
+      gasLimit: GAS_LIMIT,
+    });
+    const gnoBalance = parseFloat(fromWei(gnoBalanceWei));
+    expect(gnoBalance).to.be.gte(
+      parseFloat(fromWei(ethers.utils.parseEther("10")))
+    );
+
+    // Repeat steps for REP
+    const repExchangeAddress = await uniswapFactoryContract.getExchange(
+      rep.address,
+      {
+        gasLimit: GAS_LIMIT,
+      }
+    );
+
+    let repExchangeContract = await ethers.getContractAt(
+      uniswap.exchange.abi,
+      repExchangeAddress,
+      wallet
+    );
+
+    await repExchangeContract.ethToTokenSwapOutput(
+      ethers.utils.parseEther("200").toString(),
+      2525644800,
+      {
+        gasLimit: GAS_LIMIT,
+        value: ethers.utils.parseEther("300").toString(),
+      }
+    );
+
+    const repBalanceWei = await rep.balanceOf(wallet.address, {
+      gasLimit: GAS_LIMIT,
+    });
+    const repBalance = parseFloat(fromWei(repBalanceWei));
+    expect(repBalance).to.be.gte(
+      parseFloat(fromWei(ethers.utils.parseEther("200")))
+    );
   });
 
-  it("Create a fixed product market maker", async () => {
+  it("Create fixed product market makers", async () => {
     // 1. Prepare a condition on the conditional tokens contract
     await conditionalTokens.prepareCondition(admin, QUESTION_ID, NUM_OUTCOMES, {
       gasLimit: GAS_LIMIT,
     });
 
-    conditionId = await conditionalTokens.getConditionId(
+    conditionIdDai = await conditionalTokens.getConditionId(
       admin,
       QUESTION_ID,
       NUM_OUTCOMES,
@@ -159,7 +237,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       saltNonce,
       conditionalTokens.address,
       dai.address,
-      [conditionId],
+      [conditionIdDai],
       feeFactor,
       INITIAL_FUNDS,
       initialDistribution,
@@ -184,11 +262,11 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     const receipt = await tx.wait();
 
-    const topics = fPMMDeterministicFactory.filters.FixedProductMarketMakerCreation(
+    let topics = fPMMDeterministicFactory.filters.FixedProductMarketMakerCreation(
       admin
     ).topics;
 
-    const filter = {
+    let filter = {
       address: fPMMDeterministicFactory.address,
       blockHash: receipt.blockhash,
       topics: topics,
@@ -198,19 +276,153 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       hre.network.config.abis.fPMMDeterministicFactoryAbi
     );
 
-    const logs = await wallet.provider.getLogs(filter);
-
-    const log = logs.find((log) => log.transactionHash === tx.hash);
-
+    let logs = await wallet.provider.getLogs(filter);
+    let log = logs.find((log) => log.transactionHash === tx.hash);
     let event = iface.parseLog(log);
 
-    fixedProductMarketMaker = await ethers.getContractAt(
+    fixedProductMarketMakerDai = await ethers.getContractAt(
+      hre.network.config.abis.fixedProductMarketMakerAbi,
+      event.args.fixedProductMarketMaker
+    );
+
+    // Repeat process
+    await conditionalTokens.prepareCondition(admin, QUESTION_ID, 2, {
+      gasLimit: GAS_LIMIT,
+    });
+
+    conditionIdGno = await conditionalTokens.getConditionId(
+      admin,
+      QUESTION_ID,
+      2,
+      {
+        gasLimit: GAS_LIMIT,
+      }
+    );
+
+    const saltNonce_2 = BigNumber.from("202089897");
+    const initialDistribution_2 = [2, 1];
+    const createArgs_2 = [
+      saltNonce_2,
+      conditionalTokens.address,
+      gno.address,
+      [conditionIdGno],
+      feeFactor,
+      ethers.utils.parseEther("5"),
+      initialDistribution_2,
+    ];
+
+    const gnoBalanceWei = await gno.balanceOf(wallet.address, {
+      gasLimit: GAS_LIMIT,
+    });
+
+    expect(parseFloat(fromWei(gnoBalanceWei))).to.be.gte(
+      parseFloat(fromWei(ethers.utils.parseEther("5")))
+    );
+
+    await gno.approve(
+      fPMMDeterministicFactory.address,
+      ethers.utils.parseEther("5"),
+      {
+        gasLimit: GAS_LIMIT,
+      }
+    );
+
+    const tx_2 = await fPMMDeterministicFactory.create2FixedProductMarketMaker(
+      ...createArgs_2,
+      { gasLimit: 6000000 }
+    );
+
+    const receipt_2 = await tx_2.wait();
+
+    topics = fPMMDeterministicFactory.filters.FixedProductMarketMakerCreation(
+      admin
+    ).topics;
+
+    filter = {
+      address: fPMMDeterministicFactory.address,
+      blockHash: receipt_2.blockhash,
+      topics: topics,
+    };
+
+    logs = await wallet.provider.getLogs(filter);
+    log = logs.find((log) => log.transactionHash === tx_2.hash);
+    event = iface.parseLog(log);
+
+    fixedProductMarketMakerGno = await ethers.getContractAt(
+      hre.network.config.abis.fixedProductMarketMakerAbi,
+      event.args.fixedProductMarketMaker
+    );
+
+    // Repeat process
+    await conditionalTokens.prepareCondition(admin, QUESTION_ID, 4, {
+      gasLimit: GAS_LIMIT,
+    });
+
+    conditionIdRep = await conditionalTokens.getConditionId(
+      admin,
+      QUESTION_ID,
+      4,
+      {
+        gasLimit: GAS_LIMIT,
+      }
+    );
+
+    const saltNonce_3 = BigNumber.from("202089896");
+    const initialDistribution_3 = [4, 3, 2, 1];
+    const createArgs_3 = [
+      saltNonce_3,
+      conditionalTokens.address,
+      rep.address,
+      [conditionIdRep],
+      feeFactor,
+      ethers.utils.parseEther("100"),
+      initialDistribution_3,
+    ];
+
+    const repBalanceWei = await rep.balanceOf(wallet.address, {
+      gasLimit: GAS_LIMIT,
+    });
+
+    expect(parseFloat(fromWei(repBalanceWei))).to.be.gte(
+      parseFloat(fromWei(ethers.utils.parseEther("100")))
+    );
+
+    await rep.approve(
+      fPMMDeterministicFactory.address,
+      ethers.utils.parseEther("100"),
+      {
+        gasLimit: GAS_LIMIT,
+      }
+    );
+
+    const tx_3 = await fPMMDeterministicFactory.create2FixedProductMarketMaker(
+      ...createArgs_3,
+      { gasLimit: 6000000 }
+    );
+
+    const receipt_3 = await tx_3.wait();
+
+    topics = fPMMDeterministicFactory.filters.FixedProductMarketMakerCreation(
+      admin
+    ).topics;
+
+    filter = {
+      address: fPMMDeterministicFactory.address,
+      blockHash: receipt_3.blockhash,
+      topics: topics,
+    };
+
+    logs = await wallet.provider.getLogs(filter);
+    log = logs.find((log) => log.transactionHash === tx_3.hash);
+    event = iface.parseLog(log);
+
+    fixedProductMarketMakerRep = await ethers.getContractAt(
       hre.network.config.abis.fixedProductMarketMakerAbi,
       event.args.fixedProductMarketMaker
     );
   });
 
-  it("Fund User Proxy with DAI", async () => {
+  it("Fund User Proxy with Tokens", async () => {
     // 1. Fund Proxy with DAI
     await dai.transfer(cpk.address, INITIAL_FUNDS);
     const proxyDaiBalance = await dai.balanceOf(cpk.address);
@@ -219,10 +431,25 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     expect(parseFloat(fromWei(proxyDaiBalance))).to.be.gte(
       parseFloat(fromWei(INITIAL_FUNDS))
     );
+
+    // 2. Fund Proxy with GNO
+    await gno.transfer(cpk.address, ethers.utils.parseEther("5"));
+    const proxyGnoBalance = await gno.balanceOf(cpk.address);
+
+    expect(parseFloat(fromWei(proxyGnoBalance))).to.be.gte(
+      parseFloat(fromWei(ethers.utils.parseEther("5")))
+    );
+
+    // 3. Fund Proxy with REP
+    await rep.transfer(cpk.address, ethers.utils.parseEther("100"));
+    const proxyRepBalance = await rep.balanceOf(cpk.address);
+
+    expect(parseFloat(fromWei(proxyRepBalance))).to.be.gte(
+      parseFloat(fromWei(ethers.utils.parseEther("100")))
+    );
   });
 
   it("Add Funding via User Proxy", async () => {
-    // 1. Fund Proxy with DAI
     let iface = new ethers.utils.Interface([
       "function approve(address,uint256)",
       "function addFunding(uint256,uint256[])",
@@ -235,7 +462,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
           operation: CPK.CALL,
           value: 0,
           data: iface.encodeFunctionData("approve", [
-            fixedProductMarketMaker.address,
+            fixedProductMarketMakerDai.address,
             INITIAL_FUNDS,
           ]),
         },
@@ -248,10 +475,50 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     await approveTx.transactionResponse.wait();
 
+    const approveTx_2 = await cpk.execTransactions(
+      [
+        {
+          to: gno.address,
+          operation: CPK.CALL,
+          value: 0,
+          data: iface.encodeFunctionData("approve", [
+            fixedProductMarketMakerGno.address,
+            ethers.utils.parseEther("5"),
+          ]),
+        },
+      ],
+      {
+        value: 0,
+        gasLimit: 5000000,
+      }
+    );
+
+    await approveTx_2.transactionResponse.wait();
+
+    const approveTx_3 = await cpk.execTransactions(
+      [
+        {
+          to: rep.address,
+          operation: CPK.CALL,
+          value: 0,
+          data: iface.encodeFunctionData("approve", [
+            fixedProductMarketMakerRep.address,
+            ethers.utils.parseEther("100"),
+          ]),
+        },
+      ],
+      {
+        value: 0,
+        gasLimit: 5000000,
+      }
+    );
+
+    await approveTx_3.transactionResponse.wait();
+
     const addFundingTx = await cpk.execTransactions(
       [
         {
-          to: fixedProductMarketMaker.address,
+          to: fixedProductMarketMakerDai.address,
           operation: CPK.CALL,
           value: 0,
           data: iface.encodeFunctionData("addFunding", [INITIAL_FUNDS, []]),
@@ -265,13 +532,185 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     await addFundingTx.transactionResponse.wait();
 
-    const liquidityPoolTokenBalance = await fixedProductMarketMaker.balanceOf(
+    const addFundingTx_2 = await cpk.execTransactions(
+      [
+        {
+          to: fixedProductMarketMakerGno.address,
+          operation: CPK.CALL,
+          value: 0,
+          data: iface.encodeFunctionData("addFunding", [
+            ethers.utils.parseEther("5"),
+            [],
+          ]),
+        },
+      ],
+      {
+        value: 0,
+        gasLimit: 5000000,
+      }
+    );
+
+    await addFundingTx_2.transactionResponse.wait();
+
+    const addFundingTx_3 = await cpk.execTransactions(
+      [
+        {
+          to: fixedProductMarketMakerRep.address,
+          operation: CPK.CALL,
+          value: 0,
+          data: iface.encodeFunctionData("addFunding", [
+            ethers.utils.parseEther("100"),
+            [],
+          ]),
+        },
+      ],
+      {
+        value: 0,
+        gasLimit: 5000000,
+      }
+    );
+
+    await addFundingTx_3.transactionResponse.wait();
+
+    const liquidityPoolTokenBalanceDai = await fixedProductMarketMakerDai.balanceOf(
+      cpk.address
+    );
+    const liquidityPoolTokenBalanceGno = await fixedProductMarketMakerGno.balanceOf(
+      cpk.address
+    );
+    const liquidityPoolTokenBalanceRep = await fixedProductMarketMakerRep.balanceOf(
       cpk.address
     );
 
     // Proxy should have initial Funds LP Tplens
-    expect(parseFloat(fromWei(liquidityPoolTokenBalance))).to.be.eq(
+    expect(parseFloat(fromWei(liquidityPoolTokenBalanceDai))).to.be.eq(
       parseFloat(fromWei(INITIAL_FUNDS))
+    );
+    expect(parseFloat(fromWei(liquidityPoolTokenBalanceGno))).to.be.eq(
+      parseFloat(fromWei(ethers.utils.parseEther("5")))
+    );
+    expect(parseFloat(fromWei(liquidityPoolTokenBalanceRep))).to.be.eq(
+      parseFloat(fromWei(ethers.utils.parseEther("100")))
+    );
+  });
+
+  it("Test ActionWithdrawLiquidity directly via Proxy", async () => {
+    const liquidityActionArtifact = hre.artifacts.readArtifactSync(
+      "ActionWithdrawLiquidity"
+    );
+
+    let ifaceActionLiquidityWithdraw = new ethers.utils.Interface(
+      liquidityActionArtifact.abi
+    );
+
+    let indexSet = getIndexSets(2);
+
+    let positionIds = [];
+
+    for (const index of indexSet) {
+      const collectionId = await conditionalTokens.getCollectionId(
+        PARENT_COLLECTION_ID,
+        conditionIdGno,
+        index
+      );
+      const positionId = await conditionalTokens.getPositionId(
+        gno.address,
+        collectionId
+      );
+      positionIds.push(positionId);
+    }
+
+    const actionLiquidityWithdrawGnoInputs = [
+      conditionalTokens.address,
+      fixedProductMarketMakerGno.address,
+      positionIds,
+      conditionIdGno,
+      PARENT_COLLECTION_ID,
+      gno.address,
+      wallet.address,
+    ];
+
+    let gnoWeiBalanceBefore = await gno.balanceOf(wallet.address);
+
+    // Test ActionWithdrawLiquidity with GNO (uses fallback Uniswap oracle)
+    const actionTestTx = await cpk.execTransactions(
+      [
+        {
+          to: actionLiquidityWithdraw.address,
+          operation: CPK.DELEGATECALL,
+          value: 0,
+          data: ifaceActionLiquidityWithdraw.encodeFunctionData(
+            "action",
+            actionLiquidityWithdrawGnoInputs
+          ),
+        },
+      ],
+      {
+        value: 0,
+        gasLimit: 5000000,
+      }
+    );
+
+    await actionTestTx.transactionResponse.wait();
+
+    let gnoWeiBalanceAfter = await gno.balanceOf(wallet.address);
+    expect(parseFloat(fromWei(gnoWeiBalanceBefore))).to.be.lt(
+      parseFloat(fromWei(gnoWeiBalanceAfter))
+    );
+
+    indexSet = getIndexSets(4);
+
+    positionIds = [];
+
+    for (const index of indexSet) {
+      const collectionId = await conditionalTokens.getCollectionId(
+        PARENT_COLLECTION_ID,
+        conditionIdRep,
+        index
+      );
+      const positionId = await conditionalTokens.getPositionId(
+        rep.address,
+        collectionId
+      );
+      positionIds.push(positionId);
+    }
+
+    const actionLiquidityWithdrawRepInputs = [
+      conditionalTokens.address,
+      fixedProductMarketMakerRep.address,
+      positionIds,
+      conditionIdRep,
+      PARENT_COLLECTION_ID,
+      rep.address,
+      wallet.address,
+    ];
+
+    let repWeiBalanceBefore = await rep.balanceOf(wallet.address);
+
+    // Test ActionWithdrawLiquidity with REP (uses chainlink OracleAggregator)
+    const actionTestTx_2 = await cpk.execTransactions(
+      [
+        {
+          to: actionLiquidityWithdraw.address,
+          operation: CPK.DELEGATECALL,
+          value: 0,
+          data: ifaceActionLiquidityWithdraw.encodeFunctionData(
+            "action",
+            actionLiquidityWithdrawRepInputs
+          ),
+        },
+      ],
+      {
+        value: 0,
+        gasLimit: 5000000,
+      }
+    );
+
+    await actionTestTx_2.transactionResponse.wait();
+
+    let repWeiBalanceAfter = await rep.balanceOf(wallet.address);
+    expect(parseFloat(fromWei(repWeiBalanceBefore))).to.be.lt(
+      parseFloat(fromWei(repWeiBalanceAfter))
     );
   });
 
@@ -287,7 +726,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     // Fund Random User With ETH
     await wallet.sendTransaction({
       to: providerAddress,
-      value: ethers.utils.parseEther("500"),
+      value: ethers.utils.parseEther("100"),
       gasLimit: GAS_LIMIT,
     });
 
@@ -314,17 +753,17 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     // Now random user buys outcome tokens
     const outcomeIndex = 2;
-    const buyAmount = await fixedProductMarketMaker.calcBuyAmount(
+    const buyAmount = await fixedProductMarketMakerDai.calcBuyAmount(
       actualDaiReceived,
       outcomeIndex
     );
 
     const approveTx = await dai
       .connect(provider)
-      .approve(fixedProductMarketMaker.address, actualDaiReceived);
+      .approve(fixedProductMarketMakerDai.address, actualDaiReceived);
     await approveTx.wait();
 
-    const buyConditionalTokenTx = await fixedProductMarketMaker
+    const buyConditionalTokenTx = await fixedProductMarketMakerDai
       .connect(provider)
       .buy(actualDaiReceived, outcomeIndex, buyAmount);
     await buyConditionalTokenTx.wait();
@@ -342,8 +781,8 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     const addresses = [];
     for (const index of indexSet) {
       const collectionId = await conditionalTokens.getCollectionId(
-        PARENT_COLLETION_ID,
-        conditionId,
+        PARENT_COLLECTION_ID,
+        conditionIdDai,
         index
       );
       const positionId = await conditionalTokens.getPositionId(
@@ -364,7 +803,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     ).to.be.eq(parseFloat(fromWei(buyAmount)));
 
     // // Re connect to old account
-    fixedProductMarketMaker.connect(wallet);
+    fixedProductMarketMakerDai.connect(wallet);
     dai.connect(wallet);
   });
 
@@ -430,8 +869,8 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     for (const index of indexSet) {
       const collectionId = await conditionalTokens.getCollectionId(
-        PARENT_COLLETION_ID,
-        conditionId,
+        PARENT_COLLECTION_ID,
+        conditionIdDai,
         index
       );
       const positionId = await conditionalTokens.getPositionId(
@@ -443,10 +882,10 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     const actionLiquidityWithdrawInputs = [
       conditionalTokens.address,
-      fixedProductMarketMaker.address,
+      fixedProductMarketMakerDai.address,
       positionIds,
-      conditionId,
-      PARENT_COLLETION_ID,
+      conditionIdDai,
+      PARENT_COLLECTION_ID,
       dai.address,
       wallet.address,
     ];
@@ -563,7 +1002,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     expect(canExecResult).to.be.eq("OK");
 
-    const poolTokenBalanceBefore = await fixedProductMarketMaker.balanceOf(
+    const poolTokenBalanceBefore = await fixedProductMarketMakerDai.balanceOf(
       cpk.address
     );
 
@@ -624,7 +1063,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     //   `Execution Costs in Dai: ${parseFloat(fromWei(executionCostInDai[1]))}`
     // );
 
-    const poolTokenBalanceAfter = await fixedProductMarketMaker.balanceOf(
+    const poolTokenBalanceAfter = await fixedProductMarketMakerDai.balanceOf(
       cpk.address
     );
 
