@@ -2,7 +2,6 @@ const { BigNumber } = require("ethers");
 const { expect } = require("chai");
 const hre = require("hardhat");
 const erc20 = require("@studydefi/money-legos/erc20");
-const uniswap = require("@studydefi/money-legos/uniswap");
 
 // Gelato
 const gelato = require("@gelatonetwork/core");
@@ -11,7 +10,7 @@ const gelato = require("@gelatonetwork/core");
 const CPK = require("contract-proxy-kit");
 
 const { deployments, ethers } = hre;
-const { fromWei, getIndexSets } = require("./helpers");
+const { fromWei, getIndexSets, getTokenFromFaucet } = require("./helpers");
 
 // CONSTANTS
 const GAS_LIMIT = 5000000;
@@ -24,8 +23,8 @@ const PARENT_COLLECTION_ID = ethers.constants.HashZero;
 describe("ActionWithdrawLiquidity.sol test", function () {
   this.timeout(0);
 
-  let wallet;
-  let admin;
+  let user;
+  let userAddress;
   let conditionalTokens;
   let fPMMDeterministicFactory;
   let dai;
@@ -42,14 +41,14 @@ describe("ActionWithdrawLiquidity.sol test", function () {
   let conditionIdRep;
   let executionTime;
   let actionLiquidityWithdraw;
-  let daiExchangeContract;
   let provider;
   let task;
   let taskReceipt;
   let providerAddress;
 
   before(async () => {
-    [wallet] = await ethers.getSigners();
+    //#region Get Signers
+    [user] = await ethers.getSigners();
 
     // Unlock Gelato Provider
     provider = await ethers.provider.getSigner(
@@ -63,8 +62,10 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     });
     // Unlock Gelato Provider END
 
-    admin = await wallet.getAddress();
+    userAddress = await user.getAddress();
+    //#endregion
 
+    //#region Instantiate Contracts
     // Deploy ActionWithdrawLiquidity and OracleAggregator
     await deployments.fixture();
 
@@ -99,7 +100,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     cpk = await CPK.create({
       ethers,
-      signer: wallet,
+      signer: user,
       networks: {
         1337: {
           masterCopyAddress: hre.network.config.addresses.masterCopyAddress,
@@ -110,123 +111,46 @@ describe("ActionWithdrawLiquidity.sol test", function () {
         },
       },
     });
-  });
+    //#endregion
 
-  it("Buy Tokens from Uniswap", async () => {
-    // 1. instantiate contracts
-    const uniswapFactoryContract = await ethers.getContractAt(
-      uniswap.factory.abi,
-      uniswap.factory.address,
-      wallet
-    );
-
-    const daiExchangeAddress = await uniswapFactoryContract.getExchange(
-      dai.address,
-      {
-        gasLimit: GAS_LIMIT,
-      }
-    );
-
-    daiExchangeContract = await ethers.getContractAt(
-      uniswap.exchange.abi,
-      daiExchangeAddress,
-      wallet
-    );
-
-    // 2. do the actual swapping for DAI
-    await daiExchangeContract.ethToTokenSwapOutput(
-      INITIAL_FUNDS.mul(BigNumber.from("2")), // min amount of token retrieved
-      2525644800, // random timestamp in the future (year 2050)
-      {
-        gasLimit: GAS_LIMIT,
-        value: ethers.utils.parseEther("50"),
-      }
-    );
-
-    // 3. check DAI balance
-    const daiBalanceWei = await dai.balanceOf(wallet.address, {
-      gasLimit: GAS_LIMIT,
-    });
-
-    const daiBalance = parseFloat(fromWei(daiBalanceWei));
-    expect(daiBalance).to.be.gt(0);
-
-    // Repeat steps for GNO
-    const gnoExchangeAddress = await uniswapFactoryContract.getExchange(
+    //#region Prefund UserAddress and Gnosis Safe Address
+    await getTokenFromFaucet(dai.address, userAddress, INITIAL_FUNDS);
+    await getTokenFromFaucet(dai.address, cpk.address, INITIAL_FUNDS);
+    await getTokenFromFaucet(
       gno.address,
-      {
-        gasLimit: GAS_LIMIT,
-      }
+      userAddress,
+      ethers.utils.parseEther("10").toString()
     );
-
-    let gnoExchangeContract = await ethers.getContractAt(
-      uniswap.exchange.abi,
-      gnoExchangeAddress,
-      wallet
+    await getTokenFromFaucet(
+      gno.address,
+      cpk.address,
+      ethers.utils.parseEther("5")
     );
-
-    await gnoExchangeContract.ethToTokenSwapOutput(
-      ethers.utils.parseEther("10").toString(),
-      2525644800,
-      {
-        gasLimit: GAS_LIMIT,
-        value: ethers.utils.parseEther("300").toString(),
-      }
-    );
-
-    const gnoBalanceWei = await gno.balanceOf(wallet.address, {
-      gasLimit: GAS_LIMIT,
-    });
-    const gnoBalance = parseFloat(fromWei(gnoBalanceWei));
-    expect(gnoBalance).to.be.gte(
-      parseFloat(fromWei(ethers.utils.parseEther("10")))
-    );
-
-    // Repeat steps for REP
-    const repExchangeAddress = await uniswapFactoryContract.getExchange(
+    await getTokenFromFaucet(
       rep.address,
-      {
-        gasLimit: GAS_LIMIT,
-      }
+      userAddress,
+      ethers.utils.parseEther("200").toString()
     );
-
-    let repExchangeContract = await ethers.getContractAt(
-      uniswap.exchange.abi,
-      repExchangeAddress,
-      wallet
+    await getTokenFromFaucet(
+      rep.address,
+      cpk.address,
+      ethers.utils.parseEther("100")
     );
-
-    await repExchangeContract.ethToTokenSwapOutput(
-      ethers.utils.parseEther("200").toString(),
-      2525644800,
-      {
-        gasLimit: GAS_LIMIT,
-        value: ethers.utils.parseEther("300").toString(),
-      }
-    );
-
-    const repBalanceWei = await rep.balanceOf(wallet.address, {
-      gasLimit: GAS_LIMIT,
-    });
-    const repBalance = parseFloat(fromWei(repBalanceWei));
-    expect(repBalance).to.be.gte(
-      parseFloat(fromWei(ethers.utils.parseEther("200")))
-    );
+    //#endregion
   });
 
   it("Create fixed product market makers", async () => {
-    // 1. Prepare a condition on the conditional tokens contract
-    await conditionalTokens.prepareCondition(admin, QUESTION_ID, NUM_OUTCOMES, {
-      gasLimit: GAS_LIMIT,
-    });
+    // Prepare a condition on the conditional tokens contract
+    await conditionalTokens.prepareCondition(
+      userAddress,
+      QUESTION_ID,
+      NUM_OUTCOMES
+    );
 
     conditionIdDai = await conditionalTokens.getConditionId(
-      admin,
+      userAddress,
       QUESTION_ID,
-      NUM_OUTCOMES,
-      {
-        gasLimit: GAS_LIMIT,
-      }
+      NUM_OUTCOMES
     );
 
     // Create Fixed Point Market Maker
@@ -243,27 +167,20 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       initialDistribution,
     ];
 
-    const daiBalanceWei = await dai.balanceOf(wallet.address, {
-      gasLimit: GAS_LIMIT,
-    });
+    const daiBalanceWei = await dai.balanceOf(userAddress);
 
-    expect(parseFloat(fromWei(daiBalanceWei))).to.be.gte(
-      parseFloat(fromWei(INITIAL_FUNDS))
-    );
+    expect(daiBalanceWei).to.be.gte(INITIAL_FUNDS);
 
-    await dai.approve(fPMMDeterministicFactory.address, INITIAL_FUNDS, {
-      gasLimit: GAS_LIMIT,
-    });
+    await dai.approve(fPMMDeterministicFactory.address, INITIAL_FUNDS);
 
     const tx = await fPMMDeterministicFactory.create2FixedProductMarketMaker(
-      ...createArgs,
-      { gasLimit: 6000000 }
+      ...createArgs
     );
 
     const receipt = await tx.wait();
 
     let topics = fPMMDeterministicFactory.filters.FixedProductMarketMakerCreation(
-      admin
+      userAddress
     ).topics;
 
     let filter = {
@@ -276,7 +193,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       hre.network.config.abis.fPMMDeterministicFactoryAbi
     );
 
-    let logs = await wallet.provider.getLogs(filter);
+    let logs = await user.provider.getLogs(filter);
     let log = logs.find((log) => log.transactionHash === tx.hash);
     let event = iface.parseLog(log);
 
@@ -286,17 +203,12 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     );
 
     // Repeat process
-    await conditionalTokens.prepareCondition(admin, QUESTION_ID, 2, {
-      gasLimit: GAS_LIMIT,
-    });
+    await conditionalTokens.prepareCondition(userAddress, QUESTION_ID, 2);
 
     conditionIdGno = await conditionalTokens.getConditionId(
-      admin,
+      userAddress,
       QUESTION_ID,
-      2,
-      {
-        gasLimit: GAS_LIMIT,
-      }
+      2
     );
 
     const saltNonce_2 = BigNumber.from("202089897");
@@ -311,7 +223,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       initialDistribution_2,
     ];
 
-    const gnoBalanceWei = await gno.balanceOf(wallet.address, {
+    const gnoBalanceWei = await gno.balanceOf(userAddress, {
       gasLimit: GAS_LIMIT,
     });
 
@@ -321,21 +233,17 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     await gno.approve(
       fPMMDeterministicFactory.address,
-      ethers.utils.parseEther("5"),
-      {
-        gasLimit: GAS_LIMIT,
-      }
+      ethers.utils.parseEther("5")
     );
 
     const tx_2 = await fPMMDeterministicFactory.create2FixedProductMarketMaker(
-      ...createArgs_2,
-      { gasLimit: 6000000 }
+      ...createArgs_2
     );
 
     const receipt_2 = await tx_2.wait();
 
     topics = fPMMDeterministicFactory.filters.FixedProductMarketMakerCreation(
-      admin
+      userAddress
     ).topics;
 
     filter = {
@@ -344,7 +252,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       topics: topics,
     };
 
-    logs = await wallet.provider.getLogs(filter);
+    logs = await user.provider.getLogs(filter);
     log = logs.find((log) => log.transactionHash === tx_2.hash);
     event = iface.parseLog(log);
 
@@ -354,17 +262,12 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     );
 
     // Repeat process
-    await conditionalTokens.prepareCondition(admin, QUESTION_ID, 4, {
-      gasLimit: GAS_LIMIT,
-    });
+    await conditionalTokens.prepareCondition(userAddress, QUESTION_ID, 4);
 
     conditionIdRep = await conditionalTokens.getConditionId(
-      admin,
+      userAddress,
       QUESTION_ID,
-      4,
-      {
-        gasLimit: GAS_LIMIT,
-      }
+      4
     );
 
     const saltNonce_3 = BigNumber.from("202089896");
@@ -379,9 +282,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       initialDistribution_3,
     ];
 
-    const repBalanceWei = await rep.balanceOf(wallet.address, {
-      gasLimit: GAS_LIMIT,
-    });
+    const repBalanceWei = await rep.balanceOf(userAddress);
 
     expect(parseFloat(fromWei(repBalanceWei))).to.be.gte(
       parseFloat(fromWei(ethers.utils.parseEther("100")))
@@ -389,10 +290,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     await rep.approve(
       fPMMDeterministicFactory.address,
-      ethers.utils.parseEther("100"),
-      {
-        gasLimit: GAS_LIMIT,
-      }
+      ethers.utils.parseEther("100")
     );
 
     const tx_3 = await fPMMDeterministicFactory.create2FixedProductMarketMaker(
@@ -403,7 +301,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     const receipt_3 = await tx_3.wait();
 
     topics = fPMMDeterministicFactory.filters.FixedProductMarketMakerCreation(
-      admin
+      userAddress
     ).topics;
 
     filter = {
@@ -412,40 +310,13 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       topics: topics,
     };
 
-    logs = await wallet.provider.getLogs(filter);
+    logs = await user.provider.getLogs(filter);
     log = logs.find((log) => log.transactionHash === tx_3.hash);
     event = iface.parseLog(log);
 
     fixedProductMarketMakerRep = await ethers.getContractAt(
       hre.network.config.abis.fixedProductMarketMakerAbi,
       event.args.fixedProductMarketMaker
-    );
-  });
-
-  it("Fund User Proxy with Tokens", async () => {
-    // 1. Fund Proxy with DAI
-    await dai.transfer(cpk.address, INITIAL_FUNDS);
-    const proxyDaiBalance = await dai.balanceOf(cpk.address);
-
-    // Proxy should have initial Funds DAI
-    expect(parseFloat(fromWei(proxyDaiBalance))).to.be.gte(
-      parseFloat(fromWei(INITIAL_FUNDS))
-    );
-
-    // 2. Fund Proxy with GNO
-    await gno.transfer(cpk.address, ethers.utils.parseEther("5"));
-    const proxyGnoBalance = await gno.balanceOf(cpk.address);
-
-    expect(parseFloat(fromWei(proxyGnoBalance))).to.be.gte(
-      parseFloat(fromWei(ethers.utils.parseEther("5")))
-    );
-
-    // 3. Fund Proxy with REP
-    await rep.transfer(cpk.address, ethers.utils.parseEther("100"));
-    const proxyRepBalance = await rep.balanceOf(cpk.address);
-
-    expect(parseFloat(fromWei(proxyRepBalance))).to.be.gte(
-      parseFloat(fromWei(ethers.utils.parseEther("100")))
     );
   });
 
@@ -595,14 +466,6 @@ describe("ActionWithdrawLiquidity.sol test", function () {
   });
 
   it("Test ActionWithdrawLiquidity directly via Proxy", async () => {
-    const liquidityActionArtifact = hre.artifacts.readArtifactSync(
-      "ActionWithdrawLiquidity"
-    );
-
-    let ifaceActionLiquidityWithdraw = new ethers.utils.Interface(
-      liquidityActionArtifact.abi
-    );
-
     let indexSet = getIndexSets(2);
 
     let positionIds = [];
@@ -627,10 +490,10 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       conditionIdGno,
       PARENT_COLLECTION_ID,
       gno.address,
-      wallet.address,
+      userAddress,
     ];
 
-    let gnoWeiBalanceBefore = await gno.balanceOf(wallet.address);
+    let gnoWeiBalanceBefore = await gno.balanceOf(userAddress);
 
     // Test ActionWithdrawLiquidity with GNO (uses fallback Uniswap oracle)
     const actionTestTx = await cpk.execTransactions(
@@ -639,7 +502,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
           to: actionLiquidityWithdraw.address,
           operation: CPK.DELEGATECALL,
           value: 0,
-          data: ifaceActionLiquidityWithdraw.encodeFunctionData(
+          data: actionLiquidityWithdraw.interface.encodeFunctionData(
             "action",
             actionLiquidityWithdrawGnoInputs
           ),
@@ -653,7 +516,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     await actionTestTx.transactionResponse.wait();
 
-    let gnoWeiBalanceAfter = await gno.balanceOf(wallet.address);
+    let gnoWeiBalanceAfter = await gno.balanceOf(userAddress);
     expect(parseFloat(fromWei(gnoWeiBalanceBefore))).to.be.lt(
       parseFloat(fromWei(gnoWeiBalanceAfter))
     );
@@ -682,10 +545,10 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       conditionIdRep,
       PARENT_COLLECTION_ID,
       rep.address,
-      wallet.address,
+      userAddress,
     ];
 
-    let repWeiBalanceBefore = await rep.balanceOf(wallet.address);
+    let repWeiBalanceBefore = await rep.balanceOf(userAddress);
 
     // Test ActionWithdrawLiquidity with REP (uses chainlink OracleAggregator)
     const actionTestTx_2 = await cpk.execTransactions(
@@ -694,7 +557,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
           to: actionLiquidityWithdraw.address,
           operation: CPK.DELEGATECALL,
           value: 0,
-          data: ifaceActionLiquidityWithdraw.encodeFunctionData(
+          data: actionLiquidityWithdraw.interface.encodeFunctionData(
             "action",
             actionLiquidityWithdrawRepInputs
           ),
@@ -708,7 +571,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     await actionTestTx_2.transactionResponse.wait();
 
-    let repWeiBalanceAfter = await rep.balanceOf(wallet.address);
+    let repWeiBalanceAfter = await rep.balanceOf(userAddress);
     expect(parseFloat(fromWei(repWeiBalanceBefore))).to.be.lt(
       parseFloat(fromWei(repWeiBalanceAfter))
     );
@@ -724,56 +587,37 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
   it("Random User buys outcome tokens", async () => {
     // Fund Random User With ETH
-    await wallet.sendTransaction({
+    await user.sendTransaction({
       to: providerAddress,
       value: ethers.utils.parseEther("100"),
-      gasLimit: GAS_LIMIT,
     });
 
-    let daiBalanceWeiBefore = await dai.balanceOf(providerAddress);
-
     // Random User buys DAI
-    const daiAmountToBuy = ethers.utils.parseEther("4");
-    daiExchangeContract = daiExchangeContract.connect(provider);
-    const swapTx = await daiExchangeContract.ethToTokenSwapOutput(
-      daiAmountToBuy, // min amount of token retrieved
-      2525644800, // random timestamp in the future (year 2050)
-      {
-        gasLimit: GAS_LIMIT,
-        value: ethers.utils.parseEther("4"),
-      }
-    );
-    await swapTx.wait();
-
-    let daiBalanceWeiAfter = await dai.balanceOf(providerAddress);
-
-    let actualDaiReceived = daiBalanceWeiAfter.sub(daiBalanceWeiBefore);
-
-    expect(daiBalanceWeiAfter).to.be.gt(0);
+    const daiAmount = ethers.utils.parseEther("4");
+    const daiBalanceWeiBefore = await dai.balanceOf(providerAddress);
+    await getTokenFromFaucet(dai.address, providerAddress, daiAmount);
 
     // Now random user buys outcome tokens
     const outcomeIndex = 2;
     const buyAmount = await fixedProductMarketMakerDai.calcBuyAmount(
-      actualDaiReceived,
+      daiAmount,
       outcomeIndex
     );
 
     const approveTx = await dai
       .connect(provider)
-      .approve(fixedProductMarketMakerDai.address, actualDaiReceived);
+      .approve(fixedProductMarketMakerDai.address, daiAmount);
     await approveTx.wait();
 
     const buyConditionalTokenTx = await fixedProductMarketMakerDai
       .connect(provider)
-      .buy(actualDaiReceived, outcomeIndex, buyAmount);
+      .buy(daiAmount, outcomeIndex, buyAmount);
     await buyConditionalTokenTx.wait();
 
     // Should have 0 DAI
-    let daiBalanceWeiAfter2 = await dai.balanceOf(providerAddress, {
-      gasLimit: GAS_LIMIT,
-    });
+    let daiBalanceWeiAfter = await dai.balanceOf(providerAddress);
 
-    expect(daiBalanceWeiAfter2).to.be.eq(daiBalanceWeiBefore);
+    expect(daiBalanceWeiAfter).to.be.eq(daiBalanceWeiBefore);
 
     // Should have buyAmount Specific conditional token balance
     const indexSet = getIndexSets(NUM_OUTCOMES);
@@ -803,8 +647,8 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     ).to.be.eq(parseFloat(fromWei(buyAmount)));
 
     // // Re connect to old account
-    fixedProductMarketMakerDai.connect(wallet);
-    dai.connect(wallet);
+    fixedProductMarketMakerDai.connect(user);
+    dai.connect(user);
   });
 
   it("Submit Task On Gelato", async () => {
@@ -823,13 +667,12 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     );
 
     // Send some ETH To Proxy
-    await wallet.sendTransaction({
+    await user.sendTransaction({
       to: cpk.address,
       value: ethers.utils.parseEther("1"),
-      gasLimit: GAS_LIMIT,
     });
 
-    // const proxyEtherBalance = await wallet.provider.getBalance(cpk.address);
+    // const proxyEtherBalance = await user.provider.getBalance(cpk.address);
 
     const enableModuleTx = await cpk.execTransactions(
       [
@@ -854,7 +697,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       module: hre.network.config.addresses.gnosisSafeProviderModule,
     };
 
-    const block = await wallet.provider.getBlock();
+    const block = await user.provider.getBlock();
 
     executionTime = block.timestamp + 5 * 60; // 5 minutes
 
@@ -887,7 +730,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       conditionIdDai,
       PARENT_COLLECTION_ID,
       dai.address,
-      wallet.address,
+      userAddress,
     ];
 
     const actionLiquidityWithdrawAction = new gelato.Action({
@@ -938,7 +781,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     let iface = new ethers.utils.Interface(gelato.GelatoCore.abi);
 
-    const logs = await wallet.provider.getLogs(filter);
+    const logs = await user.provider.getLogs(filter);
 
     const log = logs.find(
       (log) => log.transactionHash === taskSubmitTxReceipt.transactionHash
@@ -958,11 +801,10 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     // Provide Task Spec
     const provideTaskSpecTx = await gelatoCore.connect(provider).multiProvide(
-      wallet.address, // executor
+      userAddress, // executor
       [taskSpec], // Task Specs
       [hre.network.config.addresses.gnosisSafeProviderModule], // Gnosis Safe provider Module
       {
-        gasLimit: GAS_LIMIT,
         value: ethers.utils.parseEther("10"),
       }
     );
@@ -978,7 +820,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     const gelatoGasPriceOracle = await ethers.getContractAt(
       oracleAbi,
       gelatoGasPriceOracleAddress,
-      wallet
+      user
     );
 
     // lastAnswer is used by GelatoGasPriceOracle as well as the Chainlink Oracle
@@ -992,7 +834,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     );
 
     // Fast forward in time
-    await wallet.provider.send("evm_mine", [executionTime]);
+    await user.provider.send("evm_mine", [executionTime]);
 
     canExecResult = await gelatoCore.canExec(
       taskReceipt,
@@ -1010,7 +852,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       parseFloat(fromWei(INITIAL_FUNDS))
     );
 
-    const daiBalanceBeforeUser = await dai.balanceOf(wallet.address);
+    const daiBalanceBeforeUser = await dai.balanceOf(userAddress);
     const daiBalanceBeforeProvider = await dai.balanceOf(providerAddress);
 
     expect(parseFloat(fromWei(daiBalanceBeforeUser))).to.be.eq(
@@ -1019,14 +861,14 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     // ########### PRE EXEUTION
     await expect(
-      gelatoCore.connect(wallet).exec(taskReceipt, {
+      gelatoCore.connect(user).exec(taskReceipt, {
         gasPrice: gelatoGasPrice,
         gasLimit: 5000000,
       })
     ).to.emit(gelatoCore, "LogExecSuccess");
 
     // 🚧 For Debugging:
-    // const txResponse2 = await gelatoCore.connect(wallet).exec(taskReceipt, {
+    // const txResponse2 = await gelatoCore.connect(user).exec(taskReceipt, {
     //   gasPrice: gelatoGasPrice,
     //   gasLimit: 5000000,
     // });
@@ -1069,7 +911,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     expect(poolTokenBalanceAfter).to.be.lt(poolTokenBalanceBefore);
 
-    // const daiBalanceAfterUser = await dai.balanceOf(wallet.address);
+    // const daiBalanceAfterUser = await dai.balanceOf(userAddress);
     // console.log(
     //   `Collateral Received back to User: ${parseFloat(
     //     fromWei(daiBalanceAfterUser)
