@@ -44,7 +44,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
     // solhint-disable var-name-mixedcase
     IERC20 public immutable WETH;
     // solhint-disable const-name-snakecase
-    uint256 public constant OVERHEAD = 180000;
+    uint256 public constant OVERHEAD = 160000;
     IUniswapV2Router02 public immutable uniRouter;
     OracleAggregator public immutable oracleAggregator;
 
@@ -154,7 +154,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
                 .add(OVERHEAD)
                 .sub(gasleft())
                 .mul(fetchCurrentGasPrice())
-                .mul(130)
+                .mul(136)
                 .div(100);
 
         // 9. Calculate how much of the collateral token needs be refunded to the provider
