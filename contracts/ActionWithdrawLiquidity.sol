@@ -81,33 +81,32 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
             "ActionWithdrawLiquidity: Position Ids must be at least of length 1"
         );
 
-        uint256[] memory partition = new uint256[](_positionIds.length);
-        uint256 amountToMerge;
+        // 1. Fetch the balance of liquidity pool tokens
+        uint256 lpTokensToWithdraw =
+            IERC20(address(_fixedProductMarketMaker)).balanceOf(address(this));
+
+        require(
+            lpTokensToWithdraw > 0,
+            "ActionWithdrawLiquidity: No LP tokens to withdraw"
+        );
+
+        // 2. Fetch Current collateral token balance to know how much the proxy already has
+        // and avoid more state reads by calling feesWithdrawablyBy
         uint256 collateralTokenBalancePre =
             IERC20(_collateralToken).balanceOf(address(this));
+
+        // 3. Remove funding from fixedProductMarketMaker
+        _fixedProductMarketMaker.removeFunding(lpTokensToWithdraw);
+
+        // 4. Check balances of conditional tokens
+        address[] memory proxyAddresses = new address[](_positionIds.length);
+
+        for (uint256 i; i < _positionIds.length; i++) {
+            proxyAddresses[i] = address(this);
+        }
+
+        // stack-to-deep-avoidance
         {
-            // 1. Fetch the balance of liquidity pool tokens
-            uint256 lpTokensToWithdraw =
-                IERC20(address(_fixedProductMarketMaker)).balanceOf(
-                    address(this)
-                );
-
-            require(
-                lpTokensToWithdraw > 0,
-                "ActionWithdrawLiquidity: No LP tokens to withdraw"
-            );
-
-            // 3. Remove funding from fixedProductMarketMaker
-            _fixedProductMarketMaker.removeFunding(lpTokensToWithdraw);
-
-            // 4. Check balances of conditional tokens
-            address[] memory proxyAddresses =
-                new address[](_positionIds.length);
-
-            for (uint256 i; i < _positionIds.length; i++) {
-                proxyAddresses[i] = address(this);
-            }
-
             uint256[] memory outcomeTokenBalances =
                 IERC1155(address(_conditionalTokens)).balanceOfBatch(
                     proxyAddresses,
@@ -115,7 +114,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
                 );
 
             // 5. Find the lowest balance of all outcome tokens
-            amountToMerge = outcomeTokenBalances[0];
+            uint256 amountToMerge = outcomeTokenBalances[0];
             for (uint256 i = 1; i < outcomeTokenBalances.length; i++) {
                 uint256 outcomeTokenBalance = outcomeTokenBalances[i];
                 if (outcomeTokenBalance < amountToMerge)
@@ -127,19 +126,20 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
                 "ActionWithdrawLiquidity: No outcome tokens to merge"
             );
 
+            uint256[] memory partition = new uint256[](_positionIds.length);
             for (uint256 i; i < partition.length; i++) {
                 partition[i] = 1 << i;
             }
-        }
 
-        // 6. Merge outcome tokens
-        _conditionalTokens.mergePositions(
-            IERC20(_collateralToken),
-            _parentCollectionId,
-            _conditionId,
-            partition,
-            amountToMerge
-        );
+            // 6. Merge outcome tokens
+            _conditionalTokens.mergePositions(
+                IERC20(_collateralToken),
+                _parentCollectionId,
+                _conditionId,
+                partition,
+                amountToMerge
+            );
+        }
 
         // 7. Calculate exactly how many collateral tokens were recevied
         uint256 collateralTokensReceived =
@@ -181,6 +181,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
                 revert("ActionWithdrawLiquidity: OracleAggregator Error");
             }
         }
+
         require(
             collateralTokenFee <= collateralTokensReceived,
             "ActionWithdrawLiquidity: Insufficient Collateral to pay for withdraw transaction"
@@ -194,7 +195,6 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
         );
 
         // 11. Transfer Fee back to provider
-        // @DEV Need to change this to tx.origin later
         IERC20(_collateralToken).safeTransfer(
             tx.origin,
             collateralTokenFee,
