@@ -20,6 +20,8 @@ import {
 import {IGasPriceOracle} from "./dapp_interfaces/chainlink/IGasPriceOracle.sol";
 import {IUniswapV2Router02} from "./dapp_interfaces/uniswap_v2/IUniswapV2.sol";
 
+// import "hardhat/console.sol";
+
 /// @title ActionWithdrawLiquidity
 /// @author @hilmarx
 /// @notice Gelato Action that
@@ -42,7 +44,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
     // solhint-disable var-name-mixedcase
     IERC20 public immutable WETH;
     // solhint-disable const-name-snakecase
-    uint256 public constant OVERHEAD = 180000;
+    uint256 public constant OVERHEAD = 160000;
     IUniswapV2Router02 public immutable uniRouter;
     OracleAggregator public immutable oracleAggregator;
 
@@ -89,7 +91,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
         );
 
         // 2. Fetch Current collateral token balance to know how much the proxy already has
-        // And avoid more state reads by calling feesWithdrawablyBy
+        // and avoid more state reads by calling feesWithdrawablyBy
         uint256 collateralTokenBalancePre =
             IERC20(_collateralToken).balanceOf(address(this));
 
@@ -98,42 +100,46 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
 
         // 4. Check balances of conditional tokens
         address[] memory proxyAddresses = new address[](_positionIds.length);
+
         for (uint256 i; i < _positionIds.length; i++) {
             proxyAddresses[i] = address(this);
         }
 
-        uint256[] memory outcomeTokenBalances =
-            IERC1155(address(_conditionalTokens)).balanceOfBatch(
-                proxyAddresses,
-                _positionIds
+        // stack-to-deep-avoidance
+        {
+            uint256[] memory outcomeTokenBalances =
+                IERC1155(address(_conditionalTokens)).balanceOfBatch(
+                    proxyAddresses,
+                    _positionIds
+                );
+
+            // 5. Find the lowest balance of all outcome tokens
+            uint256 amountToMerge = outcomeTokenBalances[0];
+            for (uint256 i = 1; i < outcomeTokenBalances.length; i++) {
+                uint256 outcomeTokenBalance = outcomeTokenBalances[i];
+                if (outcomeTokenBalance < amountToMerge)
+                    amountToMerge = outcomeTokenBalance;
+            }
+
+            require(
+                amountToMerge > 0,
+                "ActionWithdrawLiquidity: No outcome tokens to merge"
             );
 
-        // 5. Find the lowest balance of all outcome tokens
-        uint256 amountToMerge = outcomeTokenBalances[0];
-        for (uint256 i = 1; i < outcomeTokenBalances.length; i++) {
-            uint256 outcomeTokenBalance = outcomeTokenBalances[i];
-            if (outcomeTokenBalance < amountToMerge)
-                amountToMerge = outcomeTokenBalance;
+            uint256[] memory partition = new uint256[](_positionIds.length);
+            for (uint256 i; i < partition.length; i++) {
+                partition[i] = 1 << i;
+            }
+
+            // 6. Merge outcome tokens
+            _conditionalTokens.mergePositions(
+                IERC20(_collateralToken),
+                _parentCollectionId,
+                _conditionId,
+                partition,
+                amountToMerge
+            );
         }
-
-        require(
-            amountToMerge > 0,
-            "ActionWithdrawLiquidity: No outcome tokens to merge"
-        );
-
-        uint256[] memory partition = new uint256[](_positionIds.length);
-        for (uint256 i; i < partition.length; i++) {
-            partition[i] = 1 << i;
-        }
-
-        // 6. Merge outcome tokens
-        _conditionalTokens.mergePositions(
-            IERC20(_collateralToken),
-            _parentCollectionId,
-            _conditionId,
-            partition,
-            amountToMerge
-        );
 
         // 7. Calculate exactly how many collateral tokens were recevied
         uint256 collateralTokensReceived =
@@ -142,8 +148,14 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
             );
 
         // 8. Calculate how much this action consumed
+        // console.log("Gas measured in action: %s", startGas - gasleft());
         uint256 ethToBeRefunded =
-            startGas.add(OVERHEAD).sub(gasleft()).mul(fetchCurrentGasPrice());
+            startGas
+                .add(OVERHEAD)
+                .sub(gasleft())
+                .mul(fetchCurrentGasPrice())
+                .mul(136)
+                .div(100);
 
         // 9. Calculate how much of the collateral token needs be refunded to the provider
         uint256 collateralTokenFee;
@@ -169,6 +181,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
                 revert("ActionWithdrawLiquidity: OracleAggregator Error");
             }
         }
+
         require(
             collateralTokenFee <= collateralTokensReceived,
             "ActionWithdrawLiquidity: Insufficient Collateral to pay for withdraw transaction"
@@ -182,9 +195,8 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
         );
 
         // 11. Transfer Fee back to provider
-        // @DEV Need to change this to tx.origin later
         IERC20(_collateralToken).safeTransfer(
-            provider,
+            tx.origin,
             collateralTokenFee,
             "Transfer Collateral to receiver failed"
         );
