@@ -10,7 +10,6 @@ const CPK = require("contract-proxy-kit");
 
 const { deployments, ethers } = hre;
 const {
-  fromWei,
   getTokenFromFaucet,
   createFPMM,
   getConditionIds,
@@ -201,9 +200,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
         cpk.address
       );
 
-      expect(parseFloat(fromWei(liquidityPoolTokenBalance))).to.be.eq(
-        parseFloat(fromWei(INITIAL_FUNDS))
-      );
+      expect(liquidityPoolTokenBalance).to.be.eq(INITIAL_FUNDS);
       //#endregion
     }
   });
@@ -248,9 +245,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     await actionTestTx.transactionResponse.wait();
 
     let gnoWeiBalanceAfter = await gno.balanceOf(userAddress);
-    expect(parseFloat(fromWei(gnoWeiBalanceBefore))).to.be.lt(
-      parseFloat(fromWei(gnoWeiBalanceAfter))
-    );
+    expect(gnoWeiBalanceBefore).to.be.lt(gnoWeiBalanceAfter);
 
     const repIds = await getConditionIds(
       conditionalTokens,
@@ -292,9 +287,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     await actionTestTx_2.transactionResponse.wait();
 
     let repWeiBalanceAfter = await rep.balanceOf(userAddress);
-    expect(parseFloat(fromWei(repWeiBalanceBefore))).to.be.lt(
-      parseFloat(fromWei(repWeiBalanceAfter))
-    );
+    expect(repWeiBalanceBefore).to.be.lt(repWeiBalanceAfter);
   });
 
   it("Set up executor on gelato", async () => {
@@ -353,9 +346,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       daiIds.positionIds
     );
 
-    expect(
-      parseFloat(fromWei(conditionalTokenBalances[outcomeIndex]))
-    ).to.be.eq(parseFloat(fromWei(buyAmount)));
+    expect(conditionalTokenBalances[outcomeIndex]).to.be.eq(buyAmount);
 
     // // Re connect to old account
     fixedProductMarketMakerDai.connect(user);
@@ -537,30 +528,13 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       cpk.address
     );
 
-    expect(parseFloat(fromWei(poolTokenBalanceBefore))).to.be.eq(
-      parseFloat(fromWei(INITIAL_FUNDS))
-    );
+    expect(poolTokenBalanceBefore).to.be.eq(INITIAL_FUNDS);
 
     // ########### PRE EXECUTION
     const userDaiBalanceWei = await dai.balanceOf(userAddress);
-    expect(parseFloat(fromWei(userDaiBalanceWei))).to.be.eq(
-      parseFloat(fromWei(0))
-    );
+    expect(userDaiBalanceWei).to.be.eq(0);
     const userBalanceWei = await user.getBalance();
     const receiverDaiBalanceWei = await dai.balanceOf(receiverAddress);
-    console.log(
-      `EXEC - ETH: ${fromWei(userBalanceWei)} (${userBalanceWei.toString()})`
-    );
-    console.log(
-      `EXEC - DAI: ${fromWei(
-        userDaiBalanceWei
-      )} (${userDaiBalanceWei.toString()})`
-    );
-    console.log(
-      `RECEIVER - DAI: ${fromWei(
-        receiverDaiBalanceWei
-      )} (${receiverDaiBalanceWei.toString()})`
-    );
     await expect(
       gelatoCore.connect(user).exec(taskReceipt, {
         gasPrice: gelatoGasPrice,
@@ -571,21 +545,6 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     const userDaiBalanceWeiAfter = await dai.balanceOf(userAddress);
     const userBalanceWeiAfter = await user.getBalance();
     const receiverDaiBalanceWeiAfter = await dai.balanceOf(receiverAddress);
-    console.log(
-      `EXEC - ETH: ${fromWei(
-        userBalanceWeiAfter
-      )} (${userBalanceWeiAfter.toString()})`
-    );
-    console.log(
-      `EXEC - DAI: ${fromWei(
-        userDaiBalanceWeiAfter
-      )} (${userDaiBalanceWeiAfter.toString()})`
-    );
-    console.log(
-      `RECEIVER - DAI: ${fromWei(
-        receiverDaiBalanceWeiAfter
-      )} (${receiverDaiBalanceWeiAfter.toString()})`
-    );
 
     // 🚧 For Debugging:
     // const txResponse2 = await gelatoCore.connect(user).exec(taskReceipt, {
@@ -640,6 +599,9 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     const executorRefund = userDaiBalanceWeiAfter.sub(userDaiBalanceWei);
     const executorSpent = userBalanceWei.sub(userBalanceWeiAfter);
+    const receiverRefund = receiverDaiBalanceWeiAfter.sub(
+      receiverDaiBalanceWei
+    );
     // console.log(
     //   `Collateral Received back to Provider: ${parseFloat(
     //     fromWei(providerRefund)
@@ -647,17 +609,14 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     // );
 
     // @ DEV need to update that test to check for exact external provider refund
-    expect(executorRefund).to.be.gte(0);
-    console.log(`executor dai-wei refund: ${executorRefund}`);
-    console.log(`executor wei spent gas: ${executorSpent}`);
-    console.log(`executor gas units used: ${executorSpent / gelatoGasPrice}`);
     const ethPrice = await getPriceFromOracle(
       hre.network.config.addresses.chainlink.ETH_USD
     );
-    console.log(
-      `${executorRefund / ethPrice} vs ${executorSpent} (${
-        executorRefund / ethPrice > executorSpent
-      })`
-    );
+    expect(executorRefund).to.be.gt(0);
+    expect(receiverRefund).to.be.gt(0);
+    expect(executorRefund / ethPrice - executorSpent).to.be.gt(0);
+    expect(executorRefund / ethPrice - executorSpent * 1.11).to.be.gt(0);
+    expect(executorRefund / ethPrice - executorSpent * 1.11 ** 2).to.be.gt(0);
+    expect(executorRefund / ethPrice - executorSpent * 1.11 ** 3).to.be.gt(0);
   });
 });

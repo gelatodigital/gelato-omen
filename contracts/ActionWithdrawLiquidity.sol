@@ -20,6 +20,8 @@ import {
 import {IGasPriceOracle} from "./dapp_interfaces/chainlink/IGasPriceOracle.sol";
 import {IUniswapV2Router02} from "./dapp_interfaces/uniswap_v2/IUniswapV2.sol";
 
+// import "hardhat/console.sol";
+
 /// @title ActionWithdrawLiquidity
 /// @author @hilmarx
 /// @notice Gelato Action that
@@ -42,7 +44,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
     // solhint-disable var-name-mixedcase
     IERC20 public immutable WETH;
     // solhint-disable const-name-snakecase
-    uint256 public constant OVERHEAD = 180000;
+    uint256 public constant OVERHEAD = 160000;
     IUniswapV2Router02 public immutable uniRouter;
     OracleAggregator public immutable oracleAggregator;
 
@@ -79,51 +81,55 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
             "ActionWithdrawLiquidity: Position Ids must be at least of length 1"
         );
 
-        // 1. Fetch the balance of liquidity pool tokens
-        uint256 lpTokensToWithdraw =
-            IERC20(address(_fixedProductMarketMaker)).balanceOf(address(this));
-
-        require(
-            lpTokensToWithdraw > 0,
-            "ActionWithdrawLiquidity: No LP tokens to withdraw"
-        );
-
-        // 2. Fetch Current collateral token balance to know how much the proxy already has
-        // And avoid more state reads by calling feesWithdrawablyBy
+        uint256[] memory partition = new uint256[](_positionIds.length);
+        uint256 amountToMerge;
         uint256 collateralTokenBalancePre =
             IERC20(_collateralToken).balanceOf(address(this));
+        {
+            // 1. Fetch the balance of liquidity pool tokens
+            uint256 lpTokensToWithdraw =
+                IERC20(address(_fixedProductMarketMaker)).balanceOf(
+                    address(this)
+                );
 
-        // 3. Remove funding from fixedProductMarketMaker
-        _fixedProductMarketMaker.removeFunding(lpTokensToWithdraw);
-
-        // 4. Check balances of conditional tokens
-        address[] memory proxyAddresses = new address[](_positionIds.length);
-        for (uint256 i; i < _positionIds.length; i++) {
-            proxyAddresses[i] = address(this);
-        }
-
-        uint256[] memory outcomeTokenBalances =
-            IERC1155(address(_conditionalTokens)).balanceOfBatch(
-                proxyAddresses,
-                _positionIds
+            require(
+                lpTokensToWithdraw > 0,
+                "ActionWithdrawLiquidity: No LP tokens to withdraw"
             );
 
-        // 5. Find the lowest balance of all outcome tokens
-        uint256 amountToMerge = outcomeTokenBalances[0];
-        for (uint256 i = 1; i < outcomeTokenBalances.length; i++) {
-            uint256 outcomeTokenBalance = outcomeTokenBalances[i];
-            if (outcomeTokenBalance < amountToMerge)
-                amountToMerge = outcomeTokenBalance;
-        }
+            // 3. Remove funding from fixedProductMarketMaker
+            _fixedProductMarketMaker.removeFunding(lpTokensToWithdraw);
 
-        require(
-            amountToMerge > 0,
-            "ActionWithdrawLiquidity: No outcome tokens to merge"
-        );
+            // 4. Check balances of conditional tokens
+            address[] memory proxyAddresses =
+                new address[](_positionIds.length);
 
-        uint256[] memory partition = new uint256[](_positionIds.length);
-        for (uint256 i; i < partition.length; i++) {
-            partition[i] = 1 << i;
+            for (uint256 i; i < _positionIds.length; i++) {
+                proxyAddresses[i] = address(this);
+            }
+
+            uint256[] memory outcomeTokenBalances =
+                IERC1155(address(_conditionalTokens)).balanceOfBatch(
+                    proxyAddresses,
+                    _positionIds
+                );
+
+            // 5. Find the lowest balance of all outcome tokens
+            amountToMerge = outcomeTokenBalances[0];
+            for (uint256 i = 1; i < outcomeTokenBalances.length; i++) {
+                uint256 outcomeTokenBalance = outcomeTokenBalances[i];
+                if (outcomeTokenBalance < amountToMerge)
+                    amountToMerge = outcomeTokenBalance;
+            }
+
+            require(
+                amountToMerge > 0,
+                "ActionWithdrawLiquidity: No outcome tokens to merge"
+            );
+
+            for (uint256 i; i < partition.length; i++) {
+                partition[i] = 1 << i;
+            }
         }
 
         // 6. Merge outcome tokens
@@ -142,8 +148,14 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
             );
 
         // 8. Calculate how much this action consumed
+        // console.log("Gas measured in action: %s", startGas - gasleft());
         uint256 ethToBeRefunded =
-            startGas.add(OVERHEAD).sub(gasleft()).mul(fetchCurrentGasPrice());
+            startGas
+                .add(OVERHEAD)
+                .sub(gasleft())
+                .mul(fetchCurrentGasPrice())
+                .mul(136)
+                .div(100);
 
         // 9. Calculate how much of the collateral token needs be refunded to the provider
         uint256 collateralTokenFee;
