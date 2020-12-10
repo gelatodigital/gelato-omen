@@ -4,7 +4,7 @@ This repo contains tests showcasing how liquidity providers on Omen.eth or any o
 
 ## Run locally
 
-1. Add `INFURA_KEY` and a mainnet private key (`PK`) to your `.env` file
+1. Add `ALCHEMY_ID` to `.env` file
 
 2. Run:
 
