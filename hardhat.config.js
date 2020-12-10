@@ -19,6 +19,7 @@ require("dotenv").config();
 // assert.ok(INFURA_ID, "no Infura ID in process.env");
 const ALCHEMY_ID = process.env.ALCHEMY_ID;
 assert.ok(ALCHEMY_ID, "no Alchemy ID in process.env");
+const DEPLOYER_PK_RINKEBY = process.env.DEPLOYER_PK_RINKEBY
 
 // ================================= CONFIG =========================================
 module.exports = {
@@ -104,6 +105,17 @@ module.exports = {
     //   // Custom
     //   ...mainnetDeployments,
     // },
+    rinkeby: {
+      accounts: DEPLOYER_PK_RINKEBY ? [DEPLOYER_PK_RINKEBY] : [],
+      chainId: 4,
+      url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_ID}`,
+      gasPrice: parseInt(utils.parseUnits("1", "gwei")),
+      addresses: {
+        gelatoCore: "0x733aDEf4f8346FD96107d8d6605eA9ab5645d632",
+        weth: "0xc778417e063141139fce010982780140aa0cd5ab",
+        uniswapV2Router02: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+      }
+    },
   },
   solidity: {
     compilers: [

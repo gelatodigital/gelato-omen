@@ -38,7 +38,6 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
     );
 
     IGelatoSysAdmin public immutable gelatoCore;
-    address public immutable provider;
     // solhint-disable var-name-mixedcase
     address public immutable ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     // solhint-disable var-name-mixedcase
@@ -50,13 +49,11 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
 
     constructor(
         IGelatoSysAdmin _gelatoCore,
-        address _provider,
         IERC20 _weth,
         IUniswapV2Router02 _uniRouter,
         OracleAggregator _oracleAggregator
     ) public {
         gelatoCore = _gelatoCore;
-        provider = _provider;
         WETH = _weth;
         uniRouter = _uniRouter;
         oracleAggregator = _oracleAggregator;
@@ -157,7 +154,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
                 .mul(136)
                 .div(100);
 
-        // 9. Calculate how much of the collateral token needs be refunded to the provider
+        // 9. Calculate how much of the collateral token needs be refunded to the executor
         uint256 collateralTokenFee;
         if (address(WETH) == _collateralToken)
             collateralTokenFee = ethToBeRefunded;
@@ -194,7 +191,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
             "Transfer Collateral to receiver failed"
         );
 
-        // 11. Transfer Fee back to provider
+        // 11. Transfer Fee back to executor
         IERC20(_collateralToken).safeTransfer(
             tx.origin,
             collateralTokenFee,

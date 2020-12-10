@@ -19,30 +19,30 @@ contract OracleAggregator is Ownable {
 
     // solhint-disable function-max-lines
     constructor() public {
-        _nrOfDecimalsUSD[0x7354C81fbCb229187480c4f497F945C6A312d5C3] = 8; // USD
-        _nrOfDecimalsUSD[0xdAC17F958D2ee523a2206206994597C13D831ec7] = 6; // USDT
-        _nrOfDecimalsUSD[0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48] = 6; // USDC
-        _nrOfDecimalsUSD[0x6B175474E89094C44Da98b954EedeAC495271d0F] = 18; // DAI
-        _nrOfDecimalsUSD[0x4Fabb145d64652a948d72533023f6E7A623C7C53] = 18; // BUSD
-        _nrOfDecimalsUSD[0x57Ab1ec28D129707052df4dF418D58a2D46d5f51] = 18; // SUSD
-        _nrOfDecimalsUSD[0x0000000000085d4780B73119b644AE5ecd22b376] = 18; // TUSD
-
         _ETH_ADDRESS = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
         _USD_ADDRESS = 0x7354C81fbCb229187480c4f497F945C6A312d5C3; // Random address
 
-        _tokenPairAddress[0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9][
-            _ETH_ADDRESS
-        ] = 0x6Df09E975c830ECae5bd4eD9d90f3A95a4f88012; // AAVE/ETH
-        _tokenPairAddress[0xADE00C28244d5CE17D72E40330B1c318cD12B7c3][
-            _USD_ADDRESS
-        ] = 0x231e764B44b2C1b7Ca171fa8021A24ed520Cde10; // ADX/USD
+        _nrOfDecimalsUSD[_USD_ADDRESS] = 8; // USD
+        _nrOfDecimalsUSD[0xD92E713d051C37EbB2561803a3b5FBAbc4962431] = 6; // USDT
+        _nrOfDecimalsUSD[0x4DBCdF9B62e891a7cec5A2568C3F4FAF9E8Abe2b] = 6; // USDC
+        _nrOfDecimalsUSD[0x5592EC0cfb4dbc12D3aB100b257153436a1f0FEa] = 18; // DAI
+        // _nrOfDecimalsUSD[0x4Fabb145d64652a948d72533023f6E7A623C7C53] = 18; // BUSD
+        // _nrOfDecimalsUSD[0x57Ab1ec28D129707052df4dF418D58a2D46d5f51] = 18; // SUSD
+        // _nrOfDecimalsUSD[0x0000000000085d4780B73119b644AE5ecd22b376] = 18; // TUSD
 
-        _tokenPairAddress[0x0D8775F648430679A709E98d2b0Cb6250d2887EF][
+        //_tokenPairAddress[0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9][
+        //    _ETH_ADDRESS
+        // ] = 0x6Df09E975c830ECae5bd4eD9d90f3A95a4f88012; // AAVE/ETH
+        //_tokenPairAddress[0xADE00C28244d5CE17D72E40330B1c318cD12B7c3][
+        //    _USD_ADDRESS
+        // ] = 0x231e764B44b2C1b7Ca171fa8021A24ed520Cde10; // ADX/USD
+
+        _tokenPairAddress[0xBf7bBeef6C56E53f79de37eE9EF5b111335BD2AB][
             _ETH_ADDRESS
-        ] = 0x0d16d4528239e9ee52fa531af613AcdB23D88c94; // BAT/ETH
-        _tokenPairAddress[0xB8c77482e45F1F44dE1745F52C74426C631bDD52][
+        ] = 0x031dB56e01f82f20803059331DC6bEe9b17F7fC9; // BAT/ETH
+        _tokenPairAddress[0xe800Da86830a012dBeDE538f834B3a1fCc9Cb642][
             _USD_ADDRESS
-        ] = 0x14e613AC84a31f709eadbdF89C6CC390fDc9540A; // BNB/USD
+        ] = 0xcf0f51ca2cDAecb464eeE4227f5295F2384F84ED; // BNB/USD
         _tokenPairAddress[0x1F573D6Fb3F13d689FF844B4cE37794d79a7FF1C][
             _ETH_ADDRESS
         ] = 0xCf61d1841B178fe82C8895fe60c2EDDa08314416; // BNT/ETH
@@ -66,22 +66,22 @@ contract OracleAggregator is Ownable {
 
         _tokenPairAddress[0xF629cBd94d3791C9250152BD8dfBDF380E2a3B9c][
             _ETH_ADDRESS
-        ] = 0x24D9aB51950F3d62E9144fdC2f3135DAA6Ce8D1B; // ENJ/ETH
+        ] = 0x24D9aB51950F3d62E9144fdC2f3135DAA6Ce8D1B; // ENJ/ETH*/
         _tokenPairAddress[_ETH_ADDRESS][
             _USD_ADDRESS
-        ] = 0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419; // ETH/USD
+        ] = 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e; // ETH/USD
 
-        _tokenPairAddress[0xdd974D5C2e2928deA5F71b9825b8b646686BD200][
+        /*_tokenPairAddress[0xdd974D5C2e2928deA5F71b9825b8b646686BD200][
             _ETH_ADDRESS
         ] = 0x656c0544eF4C98A6a98491833A89204Abb045d6b; // KNC/ETH
         _tokenPairAddress[0xdd974D5C2e2928deA5F71b9825b8b646686BD200][
             _USD_ADDRESS
-        ] = 0xf8fF43E991A81e6eC886a3D281A2C6cC19aE70Fc; // KNC/USD
+        ] = 0xf8fF43E991A81e6eC886a3D281A2C6cC19aE70Fc; // KNC/USD*/
 
-        _tokenPairAddress[0x514910771AF9Ca656af840dff83E8264EcF986CA][
+        _tokenPairAddress[0x01BE23585060835E02B77ef475b0Cc51aA1e0709][
             _USD_ADDRESS
-        ] = 0x2c1d072e956AFFC0D435Cb7AC38EF18d24d9127c; // LINK/USD
-        _tokenPairAddress[0x514910771AF9Ca656af840dff83E8264EcF986CA][
+        ] = 0xd8bD0a1cB028a31AA859A21A3758685a95dE4623; // LINK/USD
+        /*_tokenPairAddress[0x514910771AF9Ca656af840dff83E8264EcF986CA][
             _ETH_ADDRESS
         ] = 0xDC530D9457755926550b59e8ECcdaE7624181557; // LINK/ETH
         _tokenPairAddress[0xBBbbCA6A901c926F240b89EacB641d8Aec7AEafD][
@@ -114,32 +114,32 @@ contract OracleAggregator is Ownable {
 
         _tokenPairAddress[0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F][
             _ETH_ADDRESS
-        ] = 0x79291A9d692Df95334B1a0B3B4AE6bC606782f8c; // SNX/ETH
-        _tokenPairAddress[0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F][
+        ] = 0x79291A9d692Df95334B1a0B3B4AE6bC606782f8c; // SNX/ETH*/
+        _tokenPairAddress[0x322A3346bf24363f451164d96A5b5cd5A7F4c337][
             _USD_ADDRESS
-        ] = 0xDC3EA94CD0AC27d9A86C180091e7f78C683d3699; // SNX/USD
-        _tokenPairAddress[0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9][
+        ] = 0xE96C4407597CD507002dF88ff6E0008AB41266Ee; // SNX/USD
+        /*_tokenPairAddress[0x8CE9137d39326AD0cD6491fb5CC0CbA0e089b6A9][
             _USD_ADDRESS
         ] = 0xFb0CfD6c19e25DB4a08D8a204a387cEa48Cc138f; // SXP/USD
 
         _tokenPairAddress[0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984][
             _ETH_ADDRESS
-        ] = 0xD6aA3D25116d8dA79Ea0246c4826EB951872e02e; // UNI/ETH
+        ] = 0xD6aA3D25116d8dA79Ea0246c4826EB951872e02e; // UNI/ETH*/
         _tokenPairAddress[_USD_ADDRESS][
             _ETH_ADDRESS
-        ] = 0x986b5E1e1755e3C2440e960477f25201B0a8bbD4; // USDC/ETH
+        ] = 0xdCA36F27cbC4E38aE16C4E9f99D39b42337F6dcf; // USDC/ETH
 
-        _tokenPairAddress[0xa982B2e19e90b2D9F7948e9C1b65D119F1CE88D6][
+        /*_tokenPairAddress[0xa982B2e19e90b2D9F7948e9C1b65D119F1CE88D6][
             _ETH_ADDRESS
         ] = 0xcEBD2026d3C99F2a7CE028acf372C154aB4638a9; // WOM/ETH
 
         _tokenPairAddress[0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e][
             _ETH_ADDRESS
-        ] = 0x7c5d4F8345e66f68099581Db340cd65B078C41f4; // YFI/ETH
+        ] = 0x7c5d4F8345e66f68099581Db340cd65B078C41f4; // YFI/ETH*/
 
         _tokenPairAddress[0xE41d2489571d322189246DaFA5ebDe1F4699F498][
             _ETH_ADDRESS
-        ] = 0x2Da4983a622a8498bb1a21FaE9D8F6C664939962; // ZRX/ETH
+        ] = 	0xF7Bbe4D7d13d600127B6Aa132f1dCea301e9c8Fc; // ZRX/ETH
     }
 
     function addToken(
