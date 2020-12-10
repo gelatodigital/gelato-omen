@@ -38,7 +38,6 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
     );
 
     IGelatoSysAdmin public immutable gelatoCore;
-    address public immutable provider;
     // solhint-disable var-name-mixedcase
     address public immutable ETH = 0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE;
     // solhint-disable var-name-mixedcase
@@ -50,13 +49,11 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
 
     constructor(
         IGelatoSysAdmin _gelatoCore,
-        address _provider,
         IERC20 _weth,
         IUniswapV2Router02 _uniRouter,
         OracleAggregator _oracleAggregator
     ) public {
         gelatoCore = _gelatoCore;
-        provider = _provider;
         WETH = _weth;
         uniRouter = _uniRouter;
         oracleAggregator = _oracleAggregator;

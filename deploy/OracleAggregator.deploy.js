@@ -1,4 +1,3 @@
-const hre = require("hardhat");
 const { sleep } = require("@gelatonetwork/core");
 
 module.exports = async (hre) => {
