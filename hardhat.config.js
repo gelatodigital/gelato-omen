@@ -20,7 +20,7 @@ require("dotenv").config();
 const ALCHEMY_ID = process.env.ALCHEMY_ID;
 assert.ok(ALCHEMY_ID, "no Alchemy ID in process.env");
 const ALCHEMY_ID_RINKEBY = process.env.ALCHEMY_ID_RINKEBY;
-const DEPLOYER = "0xAabB54394E8dd61Dd70897E9c80be8de7C64A895"; // Gelato-Dev-Luis
+const DEPLOYER = "0xAabB54394E8dd61Dd70897E9c80be8de7C64A895"; 
 const DEPLOYER_PK_MAINNET = process.env.DEPLOYER_PK_MAINNET;
 
 const addresses = {
