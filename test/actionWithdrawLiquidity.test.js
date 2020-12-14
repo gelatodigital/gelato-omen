@@ -102,8 +102,8 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       signer: user,
       networks: {
         1337: {
-          masterCopyAddress: hre.network.config.addresses.masterCopyAddress,
-          proxyFactoryAddress: hre.network.config.addresses.proxyFactoryAddress,
+          masterCopyAddress: hre.network.config.addresses.masterCopy111,
+          proxyFactoryAddress: hre.network.config.addresses.cpkFactory,
           multiSendAddress: hre.network.config.addresses.multiSendAddress,
           fallbackHandlerAddress:
             hre.network.config.addresses.fallbackHandlerAddress,
@@ -555,7 +555,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     // const logs = await ethers.provider.getLogs({ blockHash });
     // const iFace = new ethers.utils.Interface(gelato.GelatoCore.abi);
     // for (const log of logs) {
-    //  console.log(iFace.parseLog(log).args.reason);
+    //   console.log(iFace.parseLog(log).args.reason);
     // }
 
     // const providerPostBalance = await gelatoCore.providerFunds(providerAddress);
