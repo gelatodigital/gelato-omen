@@ -36,11 +36,13 @@ describe("OracleAggregator.sol: Return Value Checks", async function () {
     ];
     for (let i = 0; i < basicPairs.length; i++) {
       let [tokenA, tokenB, chainlinkOracle] = basicPairs[i];
-      let rawAmount = await this.oracleAggregator.getExpectedReturnAmount(
-        decimals[tokenA],
-        hre.network.config.addresses.erc20[tokenA],
-        hre.network.config.addresses.erc20[tokenB]
-      );
+      let rawAmount = (
+        await this.oracleAggregator.getExpectedReturnAmount(
+          decimals[tokenA],
+          hre.network.config.addresses.erc20[tokenA],
+          hre.network.config.addresses.erc20[tokenB]
+        )
+      ).returnAmount;
       let amount = rawAmount / decimals[tokenB];
       console.log(`    - 1 ${tokenA} is worth ${amount.toFixed(4)} ${tokenB}`);
       let check = await getPriceFromOracle(chainlinkOracle);
@@ -58,11 +60,13 @@ describe("OracleAggregator.sol: Return Value Checks", async function () {
     ];
     for (let j = 0; j < inversePairs.length; j++) {
       let [tokenA, tokenB, chainlinkOracle] = inversePairs[j];
-      let rawAmount = await this.oracleAggregator.getExpectedReturnAmount(
-        decimals[tokenA],
-        hre.network.config.addresses.erc20[tokenA],
-        hre.network.config.addresses.erc20[tokenB]
-      );
+      let rawAmount = (
+        await this.oracleAggregator.getExpectedReturnAmount(
+          decimals[tokenA],
+          hre.network.config.addresses.erc20[tokenA],
+          hre.network.config.addresses.erc20[tokenB]
+        )
+      ).returnAmount;
       let amount = rawAmount / decimals[tokenB];
       console.log(`    - 1 ${tokenA} is worth ${amount.toFixed(4)} ${tokenB}`);
       let check = await getPriceFromOracle(chainlinkOracle);
@@ -92,11 +96,13 @@ describe("OracleAggregator.sol: Return Value Checks", async function () {
     ];
     for (let k = 0; k < hardPairs.length; k++) {
       let [tokenA, tokenB] = hardPairs[k];
-      let rawAmount = await this.oracleAggregator.getExpectedReturnAmount(
-        decimals[tokenA],
-        hre.network.config.addresses.erc20[tokenA],
-        hre.network.config.addresses.erc20[tokenB]
-      );
+      let rawAmount = (
+        await this.oracleAggregator.getExpectedReturnAmount(
+          decimals[tokenA],
+          hre.network.config.addresses.erc20[tokenA],
+          hre.network.config.addresses.erc20[tokenB]
+        )
+      ).returnAmount;
       let amount = rawAmount / decimals[tokenB];
       amounts.push(amount);
       console.log(`    - 1 ${tokenA} is worth ${amount.toFixed(4)} ${tokenB}`);
