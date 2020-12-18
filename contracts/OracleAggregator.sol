@@ -207,10 +207,6 @@ contract OracleAggregator is Ownable {
                     )
                     : amount.mul(returnRateA);
 
-                nrOfDecimals = stableCoinAddress != address(0)
-                    ? _nrOfDecimalsUSD[stableCoinAddress]
-                    : nrOfDecimals;
-
                 return (returnAmount.div(10**nrOfDecimalsIn));
             } else {
                 // oracle of token_a / token_b does not exist
@@ -224,19 +220,6 @@ contract OracleAggregator is Ownable {
 
                 (uint256 returnRateB, uint256 nrOfDecimals) =
                     _getRate(tokenAddressB, pairB);
-
-                returnAmount = stableCoinAddress != address(0)
-                    ? _matchStableCoinDecimal(
-                        stableCoinAddress,
-                        amount,
-                        nrOfDecimals,
-                        nrOfDecimals,
-                        returnRateA,
-                        returnRateB
-                    )
-                    : amount.mul(returnRateA.mul(10**nrOfDecimals)).div(
-                        returnRateB
-                    );
 
                 nrOfDecimals = stableCoinAddress != address(0)
                     ? _nrOfDecimalsUSD[stableCoinAddress]
