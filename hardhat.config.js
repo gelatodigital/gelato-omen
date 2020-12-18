@@ -20,7 +20,7 @@ require("dotenv").config();
 const ALCHEMY_ID = process.env.ALCHEMY_ID;
 assert.ok(ALCHEMY_ID, "no Alchemy ID in process.env");
 const ALCHEMY_ID_RINKEBY = process.env.ALCHEMY_ID_RINKEBY;
-const DEPLOYER = "0xAabB54394E8dd61Dd70897E9c80be8de7C64A895"; 
+const DEPLOYER = "0xAabB54394E8dd61Dd70897E9c80be8de7C64A895";
 const DEPLOYER_PK_MAINNET = process.env.DEPLOYER_PK_MAINNET;
 
 const addresses = {
@@ -106,6 +106,7 @@ module.exports = {
         cpkFactory: "0x336c19296d3989e9e0c2561ef21c964068657c38",
       },
       accounts: DEPLOYER_PK_MAINNET ? [DEPLOYER_PK_MAINNET] : [],
+      gasPrice: parseInt(utils.parseUnits("1", "gwei")),
       url: `https://eth-rinkeby.alchemyapi.io/v2/${ALCHEMY_ID_RINKEBY}`,
     },
     mainnet: {
@@ -324,8 +325,29 @@ task(
 
 task("getProxyExtcodeHash", "determines gnosis safe proxy extcodehash")
   .addPositionalParam("safeAddress")
-  .setAction(async ({ safeAddress }, hre) => {
-    const provider = await hre.ethers.getDefaultProvider();
-    const extcode = await provider.getCode(safeAddress);
-    return hre.ethers.utils.solidityKeccak256(["bytes"], [extcode]);
+  .addFlag("log", "Logs return values to stdout")
+  .setAction(async ({ safeAddress, log }, hre) => {
+    // @dev check if contract is Gnosis Safe
+    // @dev passes if contract is mastercopy
+    try {
+      const gnosisSafe = await hre.ethers.getContractAt(
+        ["function NAME() view returns(string)"],
+        safeAddress
+      );
+      if ((await gnosisSafe.NAME()) !== "Gnosis Safe")
+        throw Error("Contract not a Gnosis Safe");
+    } catch (err) {
+      throw Error("Err: Contract not a Gnosis Safe");
+    }
+
+    if (log) console.log(`Finding Extcode hash for contract: ${safeAddress}`);
+    const extcode = await hre.ethers.provider.getCode(safeAddress);
+    if (extcode.toString() === "0x") throw Error("No Contract Found!");
+    if (log) console.log(`Extcode: ${extcode}`);
+    const extcodeHash = hre.ethers.utils.solidityKeccak256(
+      ["bytes"],
+      [extcode]
+    );
+    if (log) console.log(`extcodeHash: ${extcodeHash}`);
+    return extcodeHash;
   });
