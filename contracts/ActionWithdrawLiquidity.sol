@@ -165,7 +165,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
                     ETH,
                     _collateralToken
                 )
-            returns (uint256 returnAmount, uint256 decimals) {
+            returns (uint256 returnAmount, uint256) {
                 if (returnAmount != 0) collateralTokenFee = returnAmount;
                 else {
                     collateralTokenFee = getUniswapRate(
