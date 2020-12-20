@@ -157,7 +157,7 @@ contract OracleAggregator is Ownable {
         uint256 amount,
         address tokenAddressA,
         address tokenAddressB
-    ) public view returns (uint256 returnAmount) {
+    ) public view returns (uint256 returnAmount, uint256 decimals) {
         require(amount > 0, "OracleAggregator: Amount is Zero");
         require(
             tokenAddressA != address(0),
@@ -170,6 +170,7 @@ contract OracleAggregator is Ownable {
 
         uint256 nrOfDecimalsIn;
         if (tokenAddressA != _ETH_ADDRESS) {
+            // Don't work for USD as tokenAddressA
             try ERC20(tokenAddressA).decimals() returns (uint8 _inputDecimals) {
                 nrOfDecimalsIn = uint256(_inputDecimals);
             } catch {
@@ -207,36 +208,19 @@ contract OracleAggregator is Ownable {
                     )
                     : amount.mul(returnRateA);
 
-                nrOfDecimals = stableCoinAddress != address(0)
-                    ? _nrOfDecimalsUSD[stableCoinAddress]
-                    : nrOfDecimals;
-
-                return (returnAmount.div(10**nrOfDecimalsIn));
+                return (returnAmount.div(10**nrOfDecimalsIn), nrOfDecimalsIn);
             } else {
                 // oracle of token_a / token_b does not exist
                 // e.g. calculating UNI/USD
                 // UNI/ETH and USD/ETH oracles available
                 (address pairA, address pairB) =
                     _checkAvailablePair(tokenAddressA, tokenAddressB);
-                if (pairA == address(0) && pairB == address(0)) return (0);
+                if (pairA == address(0) && pairB == address(0)) return (0, 0);
 
                 (uint256 returnRateA, ) = _getRate(tokenAddressA, pairA);
 
                 (uint256 returnRateB, uint256 nrOfDecimals) =
                     _getRate(tokenAddressB, pairB);
-
-                returnAmount = stableCoinAddress != address(0)
-                    ? _matchStableCoinDecimal(
-                        stableCoinAddress,
-                        amount,
-                        nrOfDecimals,
-                        nrOfDecimals,
-                        returnRateA,
-                        returnRateB
-                    )
-                    : amount.mul(returnRateA.mul(10**nrOfDecimals)).div(
-                        returnRateB
-                    );
 
                 nrOfDecimals = stableCoinAddress != address(0)
                     ? _nrOfDecimalsUSD[stableCoinAddress]
@@ -246,9 +230,15 @@ contract OracleAggregator is Ownable {
                     .mul(returnRateA.mul(10**nrOfDecimals))
                     .div(returnRateB);
                 if (tokenAddressB != _ETH_ADDRESS) {
-                    return (returnAmount.div(10**nrOfDecimalsIn));
+                    return (
+                        returnAmount.div(10**nrOfDecimalsIn),
+                        nrOfDecimalsIn
+                    );
                 } else {
-                    return returnAmount.div(10**_nrOfDecimalsUSD[_USD_ADDRESS]);
+                    return (
+                        returnAmount.div(10**_nrOfDecimalsUSD[_USD_ADDRESS]),
+                        nrOfDecimalsIn
+                    );
                 }
             }
         } else {
@@ -256,7 +246,7 @@ contract OracleAggregator is Ownable {
             (address pairA, address pairB) =
                 _checkAvailablePair(tokenAddressA, tokenAddressB);
 
-            if (pairA == address(0) && pairB == address(0)) return (0);
+            if (pairA == address(0) && pairB == address(0)) return (0, 0);
             // oracle of token_a/ETH, token_b/ETH || token_a/USD, token_b/USD exists
             // e.g. calculating KNC/UNI where
             // KNC/ETH and UNI/ETH oracles available
@@ -270,9 +260,15 @@ contract OracleAggregator is Ownable {
                     .mul(returnRateA.mul(10**nrOfDecimals))
                     .div(returnRateB);
                 if (pairA == _ETH_ADDRESS) {
-                    return returnAmount.div(10**nrOfDecimalsIn);
+                    return (
+                        returnAmount.div(10**nrOfDecimalsIn),
+                        nrOfDecimalsIn
+                    );
                 } else {
-                    return returnAmount.div(10**_nrOfDecimalsUSD[_USD_ADDRESS]);
+                    return (
+                        returnAmount.div(10**_nrOfDecimalsUSD[_USD_ADDRESS]),
+                        nrOfDecimalsIn
+                    );
                 }
             } else if (pairA == _ETH_ADDRESS && pairB == _USD_ADDRESS) {
                 // oracle of token_a/ETH and token_b/USD exists
@@ -284,10 +280,11 @@ contract OracleAggregator is Ownable {
                         _getRate(_ETH_ADDRESS, _USD_ADDRESS);
                     (uint256 returnRateB, ) = _getRate(tokenAddressB, pairB);
 
-                    uint256 returnRateAUSD = returnRateA.mul(returnRate_ETHUSD);
-                    returnAmount = amount.mul(returnRateAUSD).div(returnRateB);
+                    returnAmount = amount
+                        .mul(returnRateA.mul(returnRate_ETHUSD))
+                        .div(returnRateB);
                 }
-                return returnAmount.div(10**nrOfDecimalsIn);
+                return (returnAmount.div(10**nrOfDecimalsIn), nrOfDecimalsIn);
             } else if (pairA == _USD_ADDRESS && pairB == _ETH_ADDRESS) {
                 // oracle of token_a/USD and token_b/ETH exists
                 // e.g. calculating SXP/UNI where
@@ -307,7 +304,7 @@ contract OracleAggregator is Ownable {
                 }
                 (uint256 returnRateB, ) = _getRate(tokenAddressB, pairB);
                 returnAmount = amount.mul(numerator).div(returnRateB);
-                return returnAmount;
+                return (returnAmount, nrOfDecimalsIn);
             }
         }
     }
