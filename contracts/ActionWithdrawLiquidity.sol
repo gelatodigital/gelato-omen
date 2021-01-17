@@ -43,7 +43,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
     // solhint-disable var-name-mixedcase
     IERC20 public immutable WETH;
     // solhint-disable const-name-snakecase
-    uint256 public constant OVERHEAD = 160000;
+    uint256 public constant OVERHEAD = 200000;
     IUniswapV2Router02 public immutable uniRouter;
     OracleAggregator public immutable oracleAggregator;
 
@@ -146,13 +146,13 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
 
         // 8. Calculate how much this action consumed
         // console.log("Gas measured in action: %s", startGas - gasleft());
+        uint256 maxGasPrice = fetchCurrentGasPrice().mul(1368).div(1000);
+        require(
+            maxGasPrice > tx.gasprice,
+            "ActionWithdrawLiquidity: Execution gas price above accepted range"
+        );
         uint256 ethToBeRefunded =
-            startGas
-                .add(OVERHEAD)
-                .sub(gasleft())
-                .mul(fetchCurrentGasPrice())
-                .mul(136)
-                .div(100);
+            startGas.sub(gasleft()).add(OVERHEAD).mul(tx.gasprice);
 
         // 9. Calculate how much of the collateral token needs be refunded to the provider
         uint256 collateralTokenFee;
@@ -191,7 +191,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
             "Transfer Collateral to receiver failed"
         );
 
-        // 11. Transfer Fee back to provider
+        // 11. Transfer Fee back to executor
         IERC20(_collateralToken).safeTransfer(
             tx.origin,
             collateralTokenFee,
