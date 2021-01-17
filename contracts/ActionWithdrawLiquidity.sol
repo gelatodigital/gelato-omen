@@ -20,8 +20,6 @@ import {
 import {IGasPriceOracle} from "./dapp_interfaces/chainlink/IGasPriceOracle.sol";
 import {IUniswapV2Router02} from "./dapp_interfaces/uniswap_v2/IUniswapV2.sol";
 
-// import "hardhat/console.sol";
-
 /// @title ActionWithdrawLiquidity
 /// @author @hilmarx
 /// @notice Gelato Action that
@@ -145,14 +143,11 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
             );
 
         // 8. Calculate how much this action consumed
-        // console.log("Gas measured in action: %s", startGas - gasleft());
-        uint256 maxGasPrice = fetchCurrentGasPrice().mul(1368).div(1000);
-        require(
-            maxGasPrice > tx.gasprice,
-            "ActionWithdrawLiquidity: Execution gas price above accepted range"
-        );
+        // User will pay tx.gasprice capped by chainlink oracle x 1.368
+        uint256 gasPrice = fetchCurrentGasPrice().mul(1368).div(1000);
+        gasPrice = tx.gasprice > gasPrice ? gasPrice : tx.gasprice;
         uint256 ethToBeRefunded =
-            startGas.sub(gasleft()).add(OVERHEAD).mul(tx.gasprice);
+            startGas.sub(gasleft()).add(OVERHEAD).mul(gasPrice);
 
         // 9. Calculate how much of the collateral token needs be refunded to the provider
         uint256 collateralTokenFee;

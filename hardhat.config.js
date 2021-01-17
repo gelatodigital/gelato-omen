@@ -27,6 +27,7 @@ const ETH_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 const USD_ADDRESS = "0x7354C81fbCb229187480c4f497F945C6A312d5C3";
 
 const mainnetAddresses = {
+  oracleAggregator: "0x479bb758024d768e4153031AC3F8Cd1e458Bd6c2",
   masterCopy111: "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F",
   masterCopy120: "0x6851D6fDFAfD08c0295C392436245E5bc78B0185",
   gelatoCore: "0x025030bdaa159f281cae63873e68313a703725a5",
@@ -86,114 +87,9 @@ mainnetOracles[mainnetAddresses.ethAddress] = {
   "0x7354C81fbCb229187480c4f497F945C6A312d5C3":
     "0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419",
 };
-mainnetOracles[mainnetAddresses.aaveAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x6Df09E975c830ECae5bd4eD9d90f3A95a4f88012",
-};
-mainnetOracles[mainnetAddresses.adxAddress] = {
-  "0x7354C81fbCb229187480c4f497F945C6A312d5C3":
-    "0x231e764B44b2C1b7Ca171fa8021A24ed520Cde10",
-};
-mainnetOracles[mainnetAddresses.batAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x0d16d4528239e9ee52fa531af613AcdB23D88c94",
-};
-mainnetOracles[mainnetAddresses.bnbAddress] = {
-  "0x7354C81fbCb229187480c4f497F945C6A312d5C3":
-    "0x14e613AC84a31f709eadbdF89C6CC390fDc9540A",
-};
-mainnetOracles[mainnetAddresses.bntAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0xCf61d1841B178fe82C8895fe60c2EDDa08314416",
-};
-mainnetOracles[mainnetAddresses.bzrxAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x8f7C7181Ed1a2BA41cfC3f5d064eF91b67daef66",
-};
-mainnetOracles[mainnetAddresses.compAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x1B39Ee86Ec5979ba5C322b826B3ECb8C79991699",
-  "0x7354C81fbCb229187480c4f497F945C6A312d5C3":
-    "0xdbd020CAeF83eFd542f4De03e3cF0C28A4428bd5",
-};
-mainnetOracles[mainnetAddresses.croAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0xcA696a9Eb93b81ADFE6435759A29aB4cf2991A96",
-};
-mainnetOracles[mainnetAddresses.dmgAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0xD010e899f7ab723AC93f825cDC5Aa057669557c2",
-};
-mainnetOracles[mainnetAddresses.enjAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x24D9aB51950F3d62E9144fdC2f3135DAA6Ce8D1B",
-};
-mainnetOracles[mainnetAddresses.kncAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x656c0544eF4C98A6a98491833A89204Abb045d6b",
-  "0x7354C81fbCb229187480c4f497F945C6A312d5C3":
-    "0xf8fF43E991A81e6eC886a3D281A2C6cC19aE70Fc",
-};
-mainnetOracles[mainnetAddresses.linkAddress] = {
-  "0x7354C81fbCb229187480c4f497F945C6A312d5C3":
-    "0x2c1d072e956AFFC0D435Cb7AC38EF18d24d9127c",
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0xDC530D9457755926550b59e8ECcdaE7624181557",
-};
-mainnetOracles[mainnetAddresses.lrcAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x160AC928A16C93eD4895C2De6f81ECcE9a7eB7b4",
-  "0x7354C81fbCb229187480c4f497F945C6A312d5C3":
-    "0x231e764B44b2C1b7Ca171fa8021A24ed520Cde10",
-};
-mainnetOracles[mainnetAddresses.manaAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x82A44D92D6c329826dc557c5E1Be6ebeC5D5FeB9",
-};
-mainnetOracles[mainnetAddresses.mkrAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x24551a8Fb2A7211A25a17B1481f043A8a8adC7f2",
-};
-mainnetOracles[mainnetAddresses.nmrAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x9cB2A01A7E64992d32A34db7cEea4c919C391f6A",
-};
-mainnetOracles[mainnetAddresses.renAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x3147D7203354Dc06D9fd350c7a2437bcA92387a4",
-  "0x7354C81fbCb229187480c4f497F945C6A312d5C3":
-    "0x0f59666EDE214281e956cb3b2D0d69415AfF4A01",
-};
-
 mainnetOracles[mainnetAddresses.repAddress] = {
   "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
     "0xD4CE430C3b67b3E2F7026D86E7128588629e2455",
-};
-mainnetOracles[mainnetAddresses.snxAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x79291A9d692Df95334B1a0B3B4AE6bC606782f8c",
-  "0x7354C81fbCb229187480c4f497F945C6A312d5C3":
-    "0xDC3EA94CD0AC27d9A86C180091e7f78C683d3699",
-};
-mainnetOracles[mainnetAddresses.sxpAddress] = {
-  "0x7354C81fbCb229187480c4f497F945C6A312d5C3":
-    "0xFb0CfD6c19e25DB4a08D8a204a387cEa48Cc138f",
-};
-mainnetOracles[mainnetAddresses.uniAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0xD6aA3D25116d8dA79Ea0246c4826EB951872e02e",
-};
-mainnetOracles[mainnetAddresses.womAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0xcEBD2026d3C99F2a7CE028acf372C154aB4638a9",
-};
-mainnetOracles[mainnetAddresses.yfiAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x7c5d4F8345e66f68099581Db340cd65B078C41f4",
-};
-mainnetOracles[mainnetAddresses.zrxAddress] = {
-  "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE":
-    "0x2Da4983a622a8498bb1a21FaE9D8F6C664939962",
 };
 
 const mainnetAddressBook = {
@@ -224,7 +120,7 @@ module.exports = {
       forking: {
         url: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_ID}`,
         // url: `https://mainnet.infura.io/v3/${process.env.INFURA_ID}`,
-        blockNumber: 11451429,
+        blockNumber: 11674075,
       },
       // Accounts
       accounts: {
@@ -237,11 +133,14 @@ module.exports = {
     },
     rinkeby: {
       addresses: {
+        oracleAggregator: "0x399cFce1F3f5AB74C46d9F0361BE18f87c23FCC3",
         masterCopy111: "0x34CfAC646f301356fAa8B21e94227e3583Fe3F5F",
         masterCopy120: "0x6851D6fDFAfD08c0295C392436245E5bc78B0185",
         gelatoCore: "0x733aDEf4f8346FD96107d8d6605eA9ab5645d632",
         gelatoActionPipeline: "0xbB193c525fdB29Cdea7261452568D83AD476ed5D",
         cpkFactory: "0x336c19296d3989e9e0c2561ef21c964068657c38",
+        uniswapV2Router02: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
+        wethAddress: "0xc778417e063141139fce010982780140aa0cd5ab",
       },
       accounts: DEPLOYER_PK_MAINNET ? [DEPLOYER_PK_MAINNET] : [],
       gasPrice: parseInt(utils.parseUnits("1", "gwei")),
@@ -252,7 +151,7 @@ module.exports = {
       accounts: DEPLOYER_PK_MAINNET ? [DEPLOYER_PK_MAINNET] : [],
       chainId: 1,
       url: `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_ID}`,
-      gasPrice: parseInt(utils.parseUnits("90", "gwei")),
+      gasPrice: parseInt(utils.parseUnits("45", "gwei")),
       timeout: 150000,
       // Custom
     },

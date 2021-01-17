@@ -442,11 +442,19 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       gasPriceCeil: 0,
     });
 
+    // check if gnosis safe module is already whitelisted or not
+    const isProviderModuleWhitelisted = await gelatoCore.isModuleProvided(
+      providerAddress,
+      hre.network.config.addresses.gnosisSafeProviderModule
+    );
+
     // Provide Task Spec
     const provideTaskSpecTx = await gelatoCore.connect(provider).multiProvide(
       userAddress, // executor
       [taskSpec], // Task Specs
-      [hre.network.config.addresses.gnosisSafeProviderModule], // Gnosis Safe provider Module
+      isProviderModuleWhitelisted
+        ? []
+        : [hre.network.config.addresses.gnosisSafeProviderModule], // Gnosis Safe provider Module
       {
         value: ethers.utils.parseEther("10"),
       }
@@ -575,6 +583,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     const ethPrice = await getPriceFromOracle(
       hre.network.config.oracles[ETH_ADDRESS][USD_ADDRESS]
     );
+
     console.log(`    ----------post exec report----------`);
     console.log(
       `    exec received: ${(executorRefund / 10 ** 18).toString()} DAI`
