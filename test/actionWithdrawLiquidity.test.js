@@ -8,6 +8,9 @@ const gelato = require("@gelatonetwork/core");
 // CPK
 const CPK = require("contract-proxy-kit");
 
+const ETH_ADDRESS = hre.network.config.addresses.ethAddress;
+const USD_ADDRESS = hre.network.config.addresses.usdAddress;
+
 const { deployments, ethers } = hre;
 const {
   getTokenFromFaucet,
@@ -85,11 +88,11 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     dai = await ethers.getContractAt(erc20.dai.abi, erc20.dai.address);
     gno = await ethers.getContractAt(
       erc20.dai.abi,
-      hre.network.config.addresses.erc20.GNO
+      hre.network.config.addresses.gnoAddress
     );
     rep = await ethers.getContractAt(
       erc20.dai.abi,
-      hre.network.config.addresses.erc20.REP
+      hre.network.config.addresses.repAddress
     );
 
     gelatoCore = await ethers.getContractAt(
@@ -246,48 +249,6 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     let gnoWeiBalanceAfter = await gno.balanceOf(userAddress);
     expect(gnoWeiBalanceBefore).to.be.lt(gnoWeiBalanceAfter);
-
-    const repIds = await getConditionIds(
-      conditionalTokens,
-      userAddress,
-      rep.address,
-      OUTCOMES_REP.length
-    );
-
-    const actionLiquidityWithdrawRepInputs = [
-      conditionalTokens.address,
-      fixedProductMarketMakerRep.address,
-      repIds.positionIds,
-      repIds.conditionId,
-      repIds.parentCollectionId,
-      rep.address,
-      userAddress,
-    ];
-
-    let repWeiBalanceBefore = await rep.balanceOf(userAddress);
-
-    // Test ActionWithdrawLiquidity with REP (uses chainlink OracleAggregator)
-    const actionTestTx_2 = await cpk.execTransactions(
-      [
-        {
-          to: actionLiquidityWithdraw.address,
-          operation: CPK.DELEGATECALL,
-          value: 0,
-          data: actionLiquidityWithdraw.interface.encodeFunctionData(
-            "action",
-            actionLiquidityWithdrawRepInputs
-          ),
-        },
-      ],
-      {
-        value: 0,
-        gasLimit: 5000000,
-      }
-    );
-    await actionTestTx_2.transactionResponse.wait();
-
-    let repWeiBalanceAfter = await rep.balanceOf(userAddress);
-    expect(repWeiBalanceBefore).to.be.lt(repWeiBalanceAfter);
   });
 
   it("Set up executor on gelato", async () => {
@@ -317,12 +278,12 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       outcomeIndex
     );
 
-    const approveTx = await dai
+    let approveTx = await dai
       .connect(provider)
       .approve(fixedProductMarketMakerDai.address, daiAmount);
     await approveTx.wait();
 
-    const buyConditionalTokenTx = await fixedProductMarketMakerDai
+    let buyConditionalTokenTx = await fixedProductMarketMakerDai
       .connect(provider)
       .buy(daiAmount, outcomeIndex, buyAmount);
     await buyConditionalTokenTx.wait();
@@ -351,6 +312,8 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     // // Re connect to old account
     fixedProductMarketMakerDai.connect(user);
     dai.connect(user);
+    fixedProductMarketMakerRep.connect(user);
+    rep.connect(user);
   });
 
   it("Submit Task On Gelato", async () => {
@@ -479,11 +442,19 @@ describe("ActionWithdrawLiquidity.sol test", function () {
       gasPriceCeil: 0,
     });
 
+    // check if gnosis safe module is already whitelisted or not
+    const isProviderModuleWhitelisted = await gelatoCore.isModuleProvided(
+      providerAddress,
+      hre.network.config.addresses.gnosisSafeProviderModule
+    );
+
     // Provide Task Spec
     const provideTaskSpecTx = await gelatoCore.connect(provider).multiProvide(
       userAddress, // executor
       [taskSpec], // Task Specs
-      [hre.network.config.addresses.gnosisSafeProviderModule], // Gnosis Safe provider Module
+      isProviderModuleWhitelisted
+        ? []
+        : [hre.network.config.addresses.gnosisSafeProviderModule], // Gnosis Safe provider Module
       {
         value: ethers.utils.parseEther("10"),
       }
@@ -537,7 +508,7 @@ describe("ActionWithdrawLiquidity.sol test", function () {
     const receiverDaiBalanceWei = await dai.balanceOf(receiverAddress);
     await expect(
       gelatoCore.connect(user).exec(taskReceipt, {
-        gasPrice: gelatoGasPrice,
+        gasPrice: (gelatoGasPrice * 1.36).toString(),
         gasLimit: 5000000,
       })
     ).to.emit(gelatoCore, "LogExecSuccess");
@@ -610,13 +581,212 @@ describe("ActionWithdrawLiquidity.sol test", function () {
 
     // @ DEV need to update that test to check for exact external provider refund
     const ethPrice = await getPriceFromOracle(
-      hre.network.config.addresses.chainlink.ETH_USD
+      hre.network.config.oracles[ETH_ADDRESS][USD_ADDRESS]
     );
+
+    console.log(`    ----------post exec report----------`);
+    console.log(
+      `    exec received: ${(executorRefund / 10 ** 18).toString()} DAI`
+    );
+    console.log(
+      `    converts to: ${(
+        executorRefund /
+        ethPrice /
+        10 ** 18
+      ).toString()} ETH`
+    );
+    console.log(`    exec spent: ${(executorSpent / 10 ** 18).toString()} ETH`);
+    console.log(
+      `    exec profit: ${(
+        (executorRefund / ethPrice - executorSpent) /
+        10 ** 18
+      ).toString()} ETH`
+    );
+    console.log(
+      `    user receives: ${(receiverRefund / 10 ** 18).toString()} DAI`
+    );
+    console.log(`    -------------------------------------`);
     expect(executorRefund).to.be.gt(0);
     expect(receiverRefund).to.be.gt(0);
     expect(executorRefund / ethPrice - executorSpent).to.be.gt(0);
-    expect(executorRefund / ethPrice - executorSpent * 1.11).to.be.gt(0);
-    expect(executorRefund / ethPrice - executorSpent * 1.11 ** 2).to.be.gt(0);
-    expect(executorRefund / ethPrice - executorSpent * 1.11 ** 3).to.be.gt(0);
+  });
+
+  it("Submit A Second Task to Gelato", async () => {
+    const repIds = await getConditionIds(
+      conditionalTokens,
+      userAddress,
+      rep.address,
+      OUTCOMES_REP.length
+    );
+
+    const actionLiquidityWithdrawInputs = [
+      conditionalTokens.address,
+      fixedProductMarketMakerRep.address,
+      repIds.positionIds,
+      repIds.conditionId,
+      repIds.parentCollectionId,
+      rep.address,
+      receiverAddress,
+    ];
+
+    const myGelatoProvider = {
+      addr: providerAddress,
+      module: hre.network.config.addresses.gnosisSafeProviderModule,
+    };
+
+    const block = await user.provider.getBlock();
+
+    executionTime = block.timestamp + 5 * 60; // 5 minutes
+
+    const timeCondition = new gelato.Condition({
+      inst: hre.network.config.addresses.timeCondition,
+      data: ethers.utils.defaultAbiCoder.encode(["uint256"], [executionTime]),
+    });
+
+    const actionLiquidityWithdrawAction = new gelato.Action({
+      addr: actionLiquidityWithdraw.address,
+      data: actionLiquidityWithdraw.interface.encodeFunctionData(
+        "action",
+        actionLiquidityWithdrawInputs
+      ),
+      operation: gelato.Operation.Delegatecall,
+    });
+
+    task = new gelato.Task({
+      conditions: [timeCondition],
+      actions: [actionLiquidityWithdrawAction],
+      selfProviderGasLimit: 0,
+      selfProviderGasPriceCeil: 0,
+    });
+
+    let currentGelatoId = await gelatoCore.currentTaskReceiptId();
+    const submitTaskTx = await cpk.execTransactions(
+      [
+        {
+          to: gelatoCore.address,
+          operation: CPK.CALL,
+          value: 0,
+          data: gelatoCore.interface.encodeFunctionData("submitTask", [
+            myGelatoProvider,
+            task,
+            0,
+          ]),
+        },
+      ],
+      {
+        gasLimit: 5000000,
+      }
+    );
+
+    taskSubmitTxReceipt = await submitTaskTx.transactionResponse.wait();
+
+    // Fetch event of the last task receipt
+    currentGelatoId = await gelatoCore.currentTaskReceiptId();
+    const topics = gelatoCore.filters.LogTaskSubmitted(currentGelatoId).topics;
+    const filter = {
+      address: gelatoCore.address.toLowerCase(),
+      blockhash: taskSubmitTxReceipt.blockHash,
+      topics,
+    };
+
+    const logs = await user.provider.getLogs(filter);
+
+    const log = logs.find(
+      (log) => log.transactionHash === taskSubmitTxReceipt.transactionHash
+    );
+
+    let event = gelatoCore.interface.parseLog(log);
+
+    taskReceipt = event.args.taskReceipt;
+    const oracleAbi = ["function latestAnswer() view returns (int256)"];
+    const gelatoGasPriceOracleAddress = await gelatoCore.gelatoGasPriceOracle();
+
+    // Get gelatoGasPriceOracleAddress
+    const gelatoGasPriceOracle = await ethers.getContractAt(
+      oracleAbi,
+      gelatoGasPriceOracleAddress,
+      user
+    );
+
+    // lastAnswer is used by GelatoGasPriceOracle as well as the Chainlink Oracle
+    const gelatoGasPrice = await gelatoGasPriceOracle.latestAnswer();
+    const gelatoMaxGas = await gelatoCore.gelatoMaxGas();
+
+    let canExecResult = await gelatoCore.canExec(
+      taskReceipt,
+      gelatoMaxGas,
+      gelatoGasPrice
+    );
+
+    // Fast forward in time
+    await user.provider.send("evm_mine", [executionTime]);
+
+    canExecResult = await gelatoCore.canExec(
+      taskReceipt,
+      taskReceipt.tasks[0].selfProviderGasLimit,
+      gelatoGasPrice
+    );
+
+    expect(canExecResult).to.be.eq("OK");
+
+    const poolTokenBalanceBefore = await fixedProductMarketMakerRep.balanceOf(
+      cpk.address
+    );
+
+    // ########### PRE EXECUTION
+    const userRepBalanceWei = await rep.balanceOf(userAddress);
+    expect(userRepBalanceWei).to.be.eq(0);
+    const userBalanceWei = await user.getBalance();
+    const receiverRepBalanceWei = await rep.balanceOf(receiverAddress);
+    await expect(
+      gelatoCore.connect(user).exec(taskReceipt, {
+        gasPrice: gelatoGasPrice,
+        gasLimit: 5000000,
+      })
+    ).to.emit(gelatoCore, "LogExecSuccess");
+
+    const userRepBalanceWeiAfter = await rep.balanceOf(userAddress);
+    const userBalanceWeiAfter = await user.getBalance();
+    const receiverRepBalanceWeiAfter = await rep.balanceOf(receiverAddress);
+
+    const poolTokenBalanceAfter = await fixedProductMarketMakerRep.balanceOf(
+      cpk.address
+    );
+
+    expect(poolTokenBalanceAfter).to.be.lt(poolTokenBalanceBefore);
+
+    const executorRefund = userRepBalanceWeiAfter.sub(userRepBalanceWei);
+    const executorSpent = userBalanceWei.sub(userBalanceWeiAfter);
+    const receiverRefund = receiverRepBalanceWeiAfter.sub(
+      receiverRepBalanceWei
+    );
+
+    const repEthPrice = await getPriceFromOracle(
+      hre.network.config.oracles[rep.address][ETH_ADDRESS]
+    );
+    console.log(`    ----------post exec report----------`);
+    console.log(
+      `    exec received: ${(executorRefund / 10 ** 18).toString()} REP`
+    );
+    console.log(
+      `    converts to: ${(
+        (executorRefund * repEthPrice) /
+        10 ** 18
+      ).toString()} ETH`
+    );
+    console.log(`    exec spent: ${(executorSpent / 10 ** 18).toString()} ETH`);
+    console.log(
+      `    exec profit: ${(
+        (executorRefund * repEthPrice - executorSpent) /
+        10 ** 18
+      ).toString()} ETH`
+    );
+    console.log(
+      `    user receives: ${(receiverRefund / 10 ** 18).toString()} REP`
+    );
+    console.log(`    -------------------------------------`);
+    expect(executorRefund).to.be.gt(0);
+    expect(receiverRefund).to.be.gt(0);
+    expect(executorRefund * repEthPrice - executorSpent).to.be.gt(0);
   });
 });

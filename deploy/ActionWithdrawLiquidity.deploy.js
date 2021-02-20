@@ -16,12 +16,11 @@ module.exports = async (hre) => {
     from: deployer,
     args: [
       hre.network.config.addresses.gelatoCore,
-      hre.network.config.addresses.weth,
+      hre.network.config.addresses.wethAddress,
       hre.network.config.addresses.uniswapV2Router02,
-      (await deployments.get("OracleAggregator")).address,
+      hre.network.config.addresses.oracleAggregator,
     ],
     log: true,
   });
 };
 module.exports.tags = ["ActionWithdrawLiquidity"];
-module.exports.dependencies = ["OracleAggregator"];

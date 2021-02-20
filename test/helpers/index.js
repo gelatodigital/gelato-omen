@@ -1,5 +1,86 @@
 const hre = require("hardhat");
-const { ethers } = hre;
+const { ethers, network } = hre;
+
+const getAggregatedOracles = () => {
+  if (network.name == "hardhat" || network.name == "mainnet") {
+    const stablecoins = [
+      network.config.addresses.usdAddress,
+      network.config.addresses.usdcAddress,
+      network.config.addresses.usdtAddress,
+      network.config.addresses.daiAddress,
+      network.config.addresses.busdAddress,
+      network.config.addresses.susdAddress,
+      network.config.addresses.tusdAddress,
+    ];
+
+    const decimals = [8, 6, 6, 18, 18, 18, 18];
+
+    const oracleTokens = [
+      network.config.addresses.usdAddress,
+      network.config.addresses.ethAddress,
+      network.config.addresses.aaveAddress,
+      network.config.addresses.adxAddress,
+      network.config.addresses.batAddress,
+      network.config.addresses.bnbAddress,
+      network.config.addresses.bntAddress,
+      network.config.addresses.bzrxAddress,
+      network.config.addresses.compAddress,
+      network.config.addresses.croAddress,
+      network.config.addresses.dmgAddress,
+      network.config.addresses.enjAddress,
+      network.config.addresses.kncAddress,
+      network.config.addresses.linkAddress,
+      network.config.addresses.lrcAddress,
+      network.config.addresses.manaAddress,
+      network.config.addresses.mkrAddress,
+      network.config.addresses.nmrAddress,
+      network.config.addresses.renAddress,
+      network.config.addresses.repAddress,
+      network.config.addresses.snxAddress,
+      network.config.addresses.sxpAddress,
+      network.config.addresses.uniAddress,
+      network.config.addresses.womAddress,
+      network.config.addresses.yfiAddress,
+      network.config.addresses.zrxAddress,
+    ];
+
+    let tokensA = [];
+    let tokensB = [];
+    let oracles = [];
+    for (let i = 0; i < oracleTokens.length; i++) {
+      if (
+        network.config.oracles[oracleTokens[i]][
+          network.config.addresses.ethAddress
+        ]
+      ) {
+        tokensA.push(oracleTokens[i]);
+        tokensB.push(network.config.addresses.ethAddress);
+        oracles.push(
+          network.config.oracles[oracleTokens[i]][
+            network.config.addresses.ethAddress
+          ]
+        );
+      }
+
+      if (
+        network.config.oracles[oracleTokens[i]][
+          network.config.addresses.usdAddress
+        ]
+      ) {
+        tokensA.push(oracleTokens[i]);
+        tokensB.push(network.config.addresses.usdAddress);
+        oracles.push(
+          network.config.oracles[oracleTokens[i]][
+            network.config.addresses.usdAddress
+          ]
+        );
+      }
+    }
+    return { tokensA, tokensB, oracles, stablecoins, decimals };
+  } else {
+    throw Error(`unsupported network ${network.name}`);
+  }
+};
 
 const QUESTION_ID = ethers.constants.HashZero;
 const PARENT_COLLECTION_ID = ethers.constants.HashZero;
@@ -41,7 +122,7 @@ const getTokenFromFaucet = async (tokenAddress, recepient, amount) => {
     // Fund faucet account with ETH
     const ethFaucet =
       faucetByToken["0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"];
-    await hre.network.provider.request({
+    await network.provider.request({
       method: "hardhat_impersonateAccount",
       params: [ethFaucet],
     });
@@ -56,7 +137,7 @@ const getTokenFromFaucet = async (tokenAddress, recepient, amount) => {
     await ethTx.wait();
   }
 
-  await hre.network.provider.request({
+  await network.provider.request({
     method: "hardhat_impersonateAccount",
     params: [faucet],
   });
@@ -95,8 +176,8 @@ const createFPMM = async (
   const userAddress = await user.getAddress();
 
   const fPMMDeterministicFactory = await ethers.getContractAt(
-    hre.network.config.abis.fPMMDeterministicFactoryAbi,
-    hre.network.config.addresses.fPMMDeterministicFactory
+    network.config.abis.fPMMDeterministicFactoryAbi,
+    network.config.addresses.fPMMDeterministicFactory
   );
 
   // Prepare a condition on the conditional tokens contract
@@ -153,7 +234,7 @@ const createFPMM = async (
   let event = fPMMDeterministicFactory.interface.parseLog(log);
 
   let fixedProductMarketMaker = await ethers.getContractAt(
-    hre.network.config.abis.fixedProductMarketMakerAbi,
+    network.config.abis.fixedProductMarketMakerAbi,
     event.args.fixedProductMarketMaker
   );
 
@@ -212,7 +293,7 @@ const faucetByToken = {
     "0xFBb1b73C4f0BDa4f67dcA266ce6Ef42f520fBB98",
   // REP
   "0x221657776846890989a759ba2973e427dff5c9bb":
-    "0x78D196056E1F369Ec2d563aAac504EA53462B30e",
+    "0x409C5aB44F99e778B8F82A3311A05149e5af3C8c",
 };
 
 module.exports = {
@@ -222,4 +303,5 @@ module.exports = {
   getTokenFromFaucet,
   createFPMM,
   getConditionIds,
+  getAggregatedOracles,
 };

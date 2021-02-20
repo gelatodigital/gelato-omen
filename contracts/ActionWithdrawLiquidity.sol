@@ -20,8 +20,6 @@ import {
 import {IGasPriceOracle} from "./dapp_interfaces/chainlink/IGasPriceOracle.sol";
 import {IUniswapV2Router02} from "./dapp_interfaces/uniswap_v2/IUniswapV2.sol";
 
-// import "hardhat/console.sol";
-
 /// @title ActionWithdrawLiquidity
 /// @author @hilmarx
 /// @notice Gelato Action that
@@ -43,7 +41,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
     // solhint-disable var-name-mixedcase
     IERC20 public immutable WETH;
     // solhint-disable const-name-snakecase
-    uint256 public constant OVERHEAD = 160000;
+    uint256 public constant OVERHEAD = 200000;
     IUniswapV2Router02 public immutable uniRouter;
     OracleAggregator public immutable oracleAggregator;
 
@@ -145,14 +143,11 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
             );
 
         // 8. Calculate how much this action consumed
-        // console.log("Gas measured in action: %s", startGas - gasleft());
+        // User will pay tx.gasprice capped by chainlink oracle x 1.368
+        uint256 gasPrice = fetchCurrentGasPrice().mul(1368).div(1000);
+        gasPrice = tx.gasprice > gasPrice ? gasPrice : tx.gasprice;
         uint256 ethToBeRefunded =
-            startGas
-                .add(OVERHEAD)
-                .sub(gasleft())
-                .mul(fetchCurrentGasPrice())
-                .mul(136)
-                .div(100);
+            startGas.sub(gasleft()).add(OVERHEAD).mul(gasPrice);
 
         // 9. Calculate how much of the collateral token needs be refunded to the provider
         uint256 collateralTokenFee;
@@ -191,7 +186,7 @@ contract ActionWithdrawLiquidity is GelatoActionsStandard {
             "Transfer Collateral to receiver failed"
         );
 
-        // 11. Transfer Fee back to provider
+        // 11. Transfer Fee back to executor
         IERC20(_collateralToken).safeTransfer(
             tx.origin,
             collateralTokenFee,
